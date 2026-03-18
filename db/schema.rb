@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_18_185912) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_18_194132) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "analyses", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -25,30 +53,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_185912) do
     t.index ["user_id"], name: "index_analyses_on_user_id"
   end
 
-  create_table "interview_answers", force: :cascade do |t|
+  create_table "answers", force: :cascade do |t|
     t.text "answer"
     t.datetime "created_at", null: false
     t.text "feedback"
-    t.bigint "interview_session_id", null: false
-    t.integer "position"
+    t.bigint "interview_id", null: false
     t.text "question"
     t.integer "score"
     t.datetime "updated_at", null: false
-    t.index ["interview_session_id"], name: "index_interview_answers_on_interview_session_id"
+    t.index ["interview_id"], name: "index_answers_on_interview_id"
   end
 
-  create_table "interview_sessions", force: :cascade do |t|
+  create_table "interviews", force: :cascade do |t|
+    t.string "category"
     t.datetime "created_at", null: false
     t.text "feedback_summary"
     t.integer "overall_score"
-    t.bigint "suggested_role_id", null: false
+    t.bigint "role_id", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.index ["suggested_role_id"], name: "index_interview_sessions_on_suggested_role_id"
-    t.index ["user_id"], name: "index_interview_sessions_on_user_id"
+    t.index ["role_id"], name: "index_interviews_on_role_id"
   end
 
-  create_table "suggested_roles", force: :cascade do |t|
+  create_table "roles", force: :cascade do |t|
     t.bigint "analysis_id", null: false
     t.datetime "created_at", null: false
     t.text "justification"
@@ -56,14 +82,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_185912) do
     t.integer "position"
     t.string "title"
     t.datetime "updated_at", null: false
-    t.index ["analysis_id"], name: "index_suggested_roles_on_analysis_id"
+    t.index ["analysis_id"], name: "index_roles_on_analysis_id"
   end
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
-    t.string "name"
+    t.string "name", default: "", null: false
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
@@ -72,9 +98,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_185912) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "analyses", "users"
-  add_foreign_key "interview_answers", "interview_sessions"
-  add_foreign_key "interview_sessions", "suggested_roles"
-  add_foreign_key "interview_sessions", "users"
-  add_foreign_key "suggested_roles", "analyses"
+  add_foreign_key "answers", "interviews"
+  add_foreign_key "interviews", "roles"
+  add_foreign_key "roles", "analyses"
 end

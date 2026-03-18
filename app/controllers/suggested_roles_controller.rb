@@ -1,2 +1,0 @@
-class SuggestedRolesController < ApplicationController
-end
