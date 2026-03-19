@@ -1,0 +1,14 @@
+<%= form_with model: @analysis, url: analyses_path do |f| %>
+  <% if @analysis.errors.any? %>
+    <div class="alert alert-danger">
+      <%= @analysis.errors.full_messages.first %>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :file, "CV em PDF" %>
+    <%= f.file_field :file, accept: "application/pdf", class: "form-control" %>
+  </div>
+
+  <%= f.submit "Enviar CV", class: "btn btn-primary" %>
+<% end %>

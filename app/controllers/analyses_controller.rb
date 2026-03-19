@@ -12,24 +12,29 @@ class AnalysesController < ApplicationController
   # Após guardar, redireciona para a página da analysis (show)
   # TODO: chamar ClaudeAnalyser.call(@analysis) aqui para gerar os 3 roles via API Anthropic
   def create
-    @analysis = Analysis.new(analysis_params)
-    @analysis.user = current_user
+    @analysis = current_user.analyses.new
+
+    if params[:analysis][:file].blank?
+      @analysis.errors.add(:file, "É obrigatório anexar um CV em PDF")
+      render :new, status: :unprocessable_entity and return
+    end
 
     if @analysis.save
+      @analysis.file.attach(params[:analysis][:file])
+
+      begin
+        @analysis.cv_text = PdfParser.extract(@analysis.file)
+        @analysis.save
+      rescue PdfParserError => e
+        @analysis.errors.add(:file, e.message)
+        render :new, status: :unprocessable_entity and return
+      end
+
       redirect_to analysis_path(@analysis), notice: "CV enviado! A IA está a analisar o teu perfil."
     else
       render :new, status: :unprocessable_entity
     end
   end
-
-  # GET /analyses/:id
-  # Mostra o resultado da análise com os 3 roles sugeridos
-  # @roles ordenados por position (1, 2, 3) — ordem de recomendação da IA
-  def show
-    @analysis = Analysis.find(params[:id])
-    @roles = @analysis.roles.order(:position)
-  end
-
   private
 
   # Filtra os parâmetros permitidos vindos do formulário

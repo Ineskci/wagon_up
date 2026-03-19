@@ -46,6 +46,7 @@ gem "autoprefixer-rails"
 gem "font-awesome-sass", "~> 6.1"
 gem "simple_form", github: "heartcombo/simple_form"
 gem "sassc-rails"
+gem 'pdf-reader'
 
 group :development, :test do
   gem "dotenv-rails"
@@ -60,7 +61,6 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-  gem 'pdf-reader'
 end
 
 group :development do
