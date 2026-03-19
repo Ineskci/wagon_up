@@ -1,0 +1,18 @@
+<h1>Resultado da Análise</h1>
+
+<p><strong>Resumo:</strong> <%= @analysis.summary %></p>
+
+<h2>Skills</h2>
+<ul>
+  <% Array(@analysis.skills).each do |skill| %>
+    <li><%= skill %></li>
+  <% end %>
+</ul>
+
+<h2>Cargos Sugeridos</h2>
+<% @analysis.roles.order(:position).each do |role| %>
+  <div>
+    <h3><%= role.position %>. <%= role.title %></h3>
+    <p><%= role.justification %></p>
+  </div>
+<% end %>

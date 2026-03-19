@@ -45,28 +45,28 @@ analysis_ines = Analysis.create!(
   user: ines,
   cv_text: "Formada em Marketing pela ESPM. Dois anos como analista de dados em startup de e-commerce. Participou do bootcamp de Data Science do Le Wagon em São Paulo.",
   summary: "Profissional com background em marketing em transição para dados. Combina visão de negócio com habilidades técnicas em análise e visualização.",
-  skills: "Python, SQL, pandas, Power BI, Google Analytics, Excel, storytelling com dados"
+  skills: ["Python", "SQL", "pandas", "Power BI", "Google Analytics", "Excel", "storytelling com dados"]
 )
 
 analysis_clara = Analysis.create!(
   user: clara,
   cv_text: "Formada em Ciências da Computação pela USP. Três anos como desenvolvedora backend em fintech. Participou do bootcamp de Web Development do Le Wagon.",
   summary: "Desenvolvedora com sólida base técnica e experiência em sistemas financeiros. Busca transição para produto ou engenharia de dados.",
-  skills: "Ruby on Rails, Python, SQL, APIs REST, PostgreSQL, Git, metodologias ágeis"
+  skills: ["Ruby on Rails", "Python", "SQL", "APIs REST", "PostgreSQL", "Git", "metodologias ágeis"]
 )
 
 analysis_rafaela = Analysis.create!(
   user: rafaela,
   cv_text: "Formada em Administração pela FGV. Quatro anos em consultoria estratégica. Participou do bootcamp de Data Science do Le Wagon no Rio de Janeiro.",
   summary: "Consultora com forte pensamento analítico e experiência em projetos de transformação digital.",
-  skills: "Python, SQL, machine learning, Excel avançado, Power BI, gestão de projetos"
+  skills: ["Python", "SQL", "machine learning", "Excel avançado", "Power BI", "gestão de projetos"]
 )
 
 analysis_gustavo = Analysis.create!(
   user: gustavo,
   cv_text: "Formado em Design pela PUC-Rio. Cinco anos como UX Designer em agência digital. Participou do bootcamp de Web Development do Le Wagon em São Paulo.",
   summary: "Designer com foco em experiência do usuário e crescente interesse em desenvolvimento front-end.",
-  skills: "Figma, HTML, CSS, JavaScript, Ruby on Rails, pesquisa com usuários, prototipagem"
+  skills: ["Figma", "HTML", "CSS", "JavaScript", "Ruby on Rails", "pesquisa com usuários", "prototipagem"]
 )
 
 # ─── Roles ────────────────────────────────────────────────────────────────────

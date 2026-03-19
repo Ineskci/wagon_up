@@ -1,16 +1,15 @@
 class AnalysesController < ApplicationController
   # GET /analyses/new
-  # Mostra o formulário de upload do CV
-  # Cria um objeto Analysis vazio para o formulário
   def new
     @analysis = Analysis.new
   end
 
+  # GET /analyses/:id
+  def show
+    @analysis = Analysis.find(params[:id])
+  end
+
   # POST /analyses
-  # Recebe o formulário com o CV e cria a analysis
-  # Associa automaticamente ao utilizador autenticado (current_user)
-  # Após guardar, redireciona para a página da analysis (show)
-  # TODO: chamar ClaudeAnalyser.call(@analysis) aqui para gerar os 3 roles via API Anthropic
   def create
     @analysis = current_user.analyses.new
 
@@ -25,6 +24,25 @@ class AnalysesController < ApplicationController
       begin
         @analysis.cv_text = PdfParser.extract(@analysis.file)
         @analysis.save
+
+        # Chamar ClaudeAnalyser
+        result = ClaudeAnalyser.new(@analysis.cv_text).call
+
+        @analysis.update!(
+          summary: result["summary"],
+          skills: result["skills"],
+          raw_json: result
+        )
+
+        result["roles"].each do |role_data|
+          @analysis.roles.create!(
+            title: role_data["title"],
+            justification: role_data["justification"],
+            market_fit: role_data["market_fit"],
+            position: role_data["position"]
+          )
+        end
+
       rescue PdfParserError => e
         @analysis.errors.add(:file, e.message)
         render :new, status: :unprocessable_entity and return
@@ -35,11 +53,9 @@ class AnalysesController < ApplicationController
       render :new, status: :unprocessable_entity
     end
   end
+
   private
 
-  # Filtra os parâmetros permitidos vindos do formulário
-  # :cv_text — texto do CV colado/digitado pelo user
-  # :file    — ficheiro PDF do CV (Active Storage)
   def analysis_params
     params.require(:analysis).permit(:cv_text, :file)
   end
