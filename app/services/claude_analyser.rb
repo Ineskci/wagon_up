@@ -9,8 +9,6 @@ class ClaudeAnalyser
   end
 
   def call
-    return mock_response
-
     raw_json = call_api
     parse_response(raw_json)
   end
@@ -71,7 +69,7 @@ class ClaudeAnalyser
   end
 
   def parse_response(raw_json)
-    clean = raw_json.gsub(/json|/, "").strip
+    clean = raw_json.gsub(/```json|```/, "").strip
     JSON.parse(clean)
   rescue JSON::ParserError => e
     Rails.logger.error("ClaudeAnalyser JSON parse error: #{e.message}")
