@@ -70,7 +70,7 @@
           <p style="color:rgba(255,255,255,.6);font-size:.95rem"><%= @analysis.summary.present? ? @analysis.summary.split(".").first + "." : "Full Stack Developer & Tech Problem Solver" %></p>
           <% top_role = @analysis.roles.order(:position).first %>
           <% if top_role %>
-            <%= link_to "Start interview prep →", new_role_interview_path(top_role), class: "btn-primary mt-3 d-inline-block" %>
+            <%= link_to "Start interview prep →", new_role_interview_path(top_role), class: "btn-primary mt-3 d-inline-block", data: { turbo_frame: "_top" } %>
           <% else %>
             <span class="btn-primary mt-3 d-inline-block" style="opacity:.5;cursor:not-allowed">Start interview prep →</span>
           <% end %>
@@ -160,7 +160,7 @@
                   </div>
                   <span class="match-pill" <%= pills[i].html_safe %>><%= pcts[i] %> match</span>
                 </div>
-                <%= link_to "See details →", role_path(role), class: "btn-outline-brand btn-sm mt-2", style: "font-size:.78rem" %>
+                <%= link_to "See details →", role_path(role), class: "btn-outline-brand btn-sm mt-2", style: "font-size:.78rem", data: { turbo_frame: "_top" } %>
               </div>
             <% end %>
           <% else %>
