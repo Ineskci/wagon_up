@@ -19,7 +19,7 @@
             <%= current_user.name.split.map(&:first).first(2).join.upcase %>
           </button>
           <div class="wu-avatar-dropdown" id="wuAvatarDrop">
-            <%= link_to "My profile", analyses_path %>
+            <%= link_to "New analysis", new_analysis_path %>
             <%= link_to "Account settings", edit_user_registration_path %>
             <%= link_to "Log out", destroy_user_session_path, data: { turbo_method: :delete } %>
           </div>
