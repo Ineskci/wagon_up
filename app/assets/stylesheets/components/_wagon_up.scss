@@ -964,6 +964,7 @@ body {
 
 .wu-chat-area {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -992,6 +993,7 @@ body {
 
 .wu-chat-messages {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 1.5rem;
   display: flex;
@@ -1038,6 +1040,13 @@ body {
   gap: .75rem;
   align-items: flex-end;
   flex-shrink: 0;
+
+  form {
+    display: flex;
+    flex: 1;
+    gap: .75rem;
+    align-items: flex-end;
+  }
 }
 
 .wu-chat-input {
