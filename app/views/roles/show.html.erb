@@ -40,50 +40,209 @@
       </div>
     </div>
 
-    <%# Why this fits %>
-    <div class="wu-card mb-4 sr d2">
-      <div style="font-size:.78rem;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem">
-        Why this fits you
-      </div>
-      <p style="font-size:.88rem;color:var(--ink-2);line-height:1.75;margin-bottom:1rem">
-        <%= @role.justification %>
-      </p>
-      <% breakdown = (@role.market_fit.is_a?(Hash) && @role.market_fit["breakdown"]) ?
-          @role.market_fit["breakdown"] :
-          [
-            "Your past experience → transferable domain knowledge",
-            "Technical skills → ready to contribute from day one",
-            "Communication background → cross-functional asset"
-          ] %>
-      <% breakdown.each do |item| %>
-        <div class="wu-match-item">
-          <span style="color:var(--brand);flex-shrink:0">✦</span>
-          <span style="font-size:.87rem;color:var(--ink-2)"><%= item %></span>
+    <%# Market Data tabs %>
+    <% if @role.market_fit.present? && @role.market_fit.is_a?(Hash) %>
+      <% markets = [
+           ["Brasil",   "🇧🇷", @role.market_fit["Brasil"]],
+           ["Portugal", "🇵🇹", @role.market_fit["Portugal"]],
+           ["USA",      "🇺🇸", @role.market_fit["Internacional"]]
+         ].select { |_, _, data| data.present? } %>
+
+      <% if markets.any? %>
+        <div class="wu-card mb-4 sr d2" data-controller="market-tabs">
+          <div style="font-size:.78rem;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem">
+            Market Data
+          </div>
+
+          <%# Tabs %>
+          <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:1.5rem">
+            <% markets.each_with_index do |(label, flag, _), i| %>
+              <button
+                data-market-tabs-target="tab"
+                data-action="click->market-tabs#select"
+                style="background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:.5rem 1.25rem .6rem;font-size:.88rem;cursor:pointer;transition:color .2s,border-color .2s">
+                <%= flag %> <%= label %>
+              </button>
+            <% end %>
+          </div>
+
+          <%# Panels %>
+          <% markets.each_with_index do |(label, _flag, data), i| %>
+            <div data-market-tabs-target="panel" hidden>
+              <%# Metric cards row %>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1rem">
+
+                <%# Salary %>
+                <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:.85rem .75rem;text-align:center">
+                  <div style="font-size:.92rem;font-weight:700;color:var(--ink);line-height:1.35"><%= data["salario"] %></div>
+                  <div style="font-size:.6rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.09em;margin-top:.4rem"><%= data["periodo"] || "per month" %></div>
+                </div>
+
+                <%# Market demand %>
+                <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:.85rem .75rem;text-align:center">
+                  <div style="font-size:.92rem;font-weight:700;color:var(--ink)"><%= data["demanda"] %></div>
+                  <% pct = data["percentual_demanda"].to_i %>
+                  <div style="height:3px;background:var(--border);border-radius:2px;margin:.45rem 0">
+                    <div style="height:3px;background:var(--brand);border-radius:2px;width:<%= pct %>%"></div>
+                  </div>
+                  <div style="font-size:.6rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.09em">Market Demand</div>
+                </div>
+
+                <%# Trend %>
+                <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:.85rem .75rem;text-align:center">
+                  <div style="font-size:.92rem;font-weight:700;color:var(--ink)"><%= data["tendencia"] %></div>
+                  <div style="font-size:.6rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.09em;margin-top:.4rem">2025 Trend</div>
+                </div>
+
+                <%# Time to hire %>
+                <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:.85rem .75rem;text-align:center">
+                  <div style="font-size:.92rem;font-weight:700;color:var(--ink)"><%= data["tempo_contratacao"] %></div>
+                  <div style="font-size:.6rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.09em;margin-top:.4rem">Avg. Time to Hire</div>
+                </div>
+
+              </div>
+
+              <%# Insight %>
+              <% if data["insight"].present? %>
+                <div style="background:var(--brand-pale);border-radius:10px;padding:1rem 1.25rem">
+                  <p style="font-size:.87rem;color:var(--ink-2);line-height:1.75;margin:0"><%= data["insight"].html_safe %></p>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         </div>
       <% end %>
+    <% end %>
+
+    <%# Why this fits %>
+    <div class="sr d3" style="margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+        <span style="font-size:.72rem;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap">Why this fits you</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+
+      <div class="wu-card">
+        <p style="font-size:.97rem;color:var(--ink-2);line-height:1.8;margin-bottom:1.5rem">
+          <%= @role.justification %>
+        </p>
+
+        <% breakdown = @analysis&.raw_json&.dig("cargos_sugeridos", @role.position - 1, "breakdown") %>
+        <% if breakdown.present? %>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+            <% breakdown.each do |item| %>
+              <div style="border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem">
+                <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.6rem">
+                  <span style="font-size:1.25rem;background:var(--brand-pale);border-radius:10px;padding:.35rem .4rem;line-height:1;flex-shrink:0"><%= item["icone"] %></span>
+                  <span style="font-size:.82rem;color:var(--ink-3);line-height:1.4"><%= item["passado"] %></span>
+                </div>
+                <div style="font-size:.85rem;color:var(--brand);margin-bottom:.4rem">↓</div>
+                <div style="font-size:.97rem;font-weight:700;color:var(--ink)"><%= item["futuro"] %></div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </div>
 
-    <%# AI Resume Prompt %>
-    <div class="wu-prompt-box mb-4 sr d3">
-      <div style="font-size:.72rem;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.3rem">
-        AI Resume Prompt
+    <%# Gap Analysis %>
+    <% lacunas = @analysis&.raw_json&.dig("cargos_sugeridos", @role.position - 1, "analise_lacunas") %>
+    <% if lacunas.present? %>
+      <div class="sr d4" style="margin-bottom:1.5rem">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+          <span style="font-size:.72rem;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap">Gap Analysis</span>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+
+        <div class="wu-card">
+          <p style="font-size:.93rem;color:var(--ink-2);line-height:1.8;margin-bottom:1.25rem">
+            Honest overview of where you stand — and what could make your profile even stronger.
+          </p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+
+            <%# What you have %>
+            <div style="border:1.5px solid #86efac;border-radius:14px;padding:1.25rem;background:#f0fdf4">
+              <div style="font-size:.72rem;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem">
+                ✅ What you have
+              </div>
+              <% (lacunas["tenho"] || []).each do |skill| %>
+                <div style="display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.6rem">
+                  <span style="color:#16a34a;font-size:.85rem;flex-shrink:0;margin-top:.05rem">✓</span>
+                  <span style="font-size:.87rem;color:var(--ink-2)"><%= skill %></span>
+                </div>
+              <% end %>
+            </div>
+
+            <%# Would strengthen you %>
+            <div style="border:1.5px solid #fde68a;border-radius:14px;padding:1.25rem;background:#fffbeb">
+              <div style="font-size:.72rem;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem">
+                🔶 Would strengthen you
+              </div>
+              <% (lacunas["falta"] || []).each do |item| %>
+                <div style="margin-bottom:1rem">
+                  <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+                    <span style="color:#b45309;font-weight:700;font-size:.9rem">+</span>
+                    <span style="font-size:.9rem;font-weight:700;color:var(--ink)"><%= item["habilidade"] %></span>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:.5rem;padding-left:.1rem">
+                    <span style="color:var(--ink-3);font-size:.85rem;flex-shrink:0">🔗</span>
+                    <span style="font-size:.82rem;color:var(--ink-3);line-height:1.5"><%= item["recurso"] %></span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+
+          </div>
+        </div>
       </div>
-      <p style="font-size:.8rem;color:var(--ink-3);margin-bottom:.75rem">
-        Use this on ChatGPT, Claude or Huntr to generate your optimised resume →
-      </p>
-      <div class="wu-prompt-text" id="promptText">Act as an expert tech recruiter and resume writer. I am a Le Wagon bootcamp graduate transitioning into a <%= @role.title %> role.
+    <% end %>
 
-My background: I have completed an intensive full-stack web development bootcamp and have previous professional experience in a different field. My technical skills include Ruby on Rails, JavaScript, React, SQL, HTML/CSS, Git, and REST APIs. I also bring transferable skills such as communication, project management, and cross-functional collaboration from my previous career.
+    <%# AI Resume Prompt %>
+    <% prompt_text = @analysis&.raw_json&.dig("cargos_sugeridos", @role.position - 1, "prompt_curriculo") %>
+    <div class="sr d4" style="margin-bottom:1.5rem">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+        <span style="font-size:.72rem;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap">AI Resume Prompt</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
 
-Please write me:
-1. A compelling, ATS-optimised resume summary (3-4 sentences) for a <%= @role.title %> position
-2. A cover letter opening paragraph that turns my career transition into a strength
-3. 5 bullet points highlighting my most relevant experience and achievements
+      <div class="wu-prompt-box" data-controller="clipboard">
+        <div style="font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:.3rem">Ready-to-use resume prompt</div>
+        <p style="font-size:.87rem;color:var(--ink-3);margin-bottom:1.1rem">
+          Copy and paste this directly into
+          <a href="https://chat.openai.com" target="_blank" style="color:var(--ink-2);font-weight:600;text-decoration:none;border-bottom:1px solid var(--border)">ChatGPT</a>,
+          <a href="https://claude.ai" target="_blank" style="color:var(--ink-2);font-weight:600;text-decoration:none;border-bottom:1px solid var(--border)">Claude</a> or
+          <a href="https://huntr.co" target="_blank" style="color:var(--ink-2);font-weight:600;text-decoration:none;border-bottom:1px solid var(--border)">Huntr</a>
+          to generate your optimised resume.
+        </p>
 
-Key ATS keywords to include: <%= @role.title %>, full-stack development, agile, REST API, PostgreSQL, Git, CI/CD, TDD, collaboration, problem-solving.
+        <% fallback_prompt = "I am a Le Wagon bootcamp graduate transitioning into a #{@role.title} role. My technical skills include Ruby on Rails, JavaScript, React, SQL, HTML/CSS, Git, and REST APIs.\n\nPlease write a tailored resume and cover letter for a #{@role.title} position, highlighting:\n- My transferable skills from my previous career\n- My bootcamp achievements and projects\n- My ability to bridge product and engineering perspectives\n- ATS-friendly keywords for a #{@role.title} role" %>
+        <div class="wu-prompt-text" data-clipboard-target="source" id="promptText">
+          <%= simple_format(prompt_text.present? ? prompt_text : fallback_prompt) %>
+        </div>
 
-Tone: confident, concise, and focused on value delivered — not just tasks completed.</div>
-      <button class="btn-wu btn-wu-primary mt-3" id="copyPromptBtn">Copy prompt</button>
+        <div style="display:flex;align-items:center;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap">
+          <button data-action="click->clipboard#copy"
+            style="display:inline-flex;align-items:center;gap:.5rem;background:var(--brand);color:#fff;border:none;border-radius:10px;padding:.7rem 1.3rem;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s"
+            onmouseover="this.style.background='var(--brand-dark)'" onmouseout="this.style.background='var(--brand)'">
+            📋 Copy prompt
+          </button>
+          <a href="https://chat.openai.com" target="_blank"
+            style="display:inline-flex;align-items:center;gap:.5rem;background:#fff;color:var(--ink);border:1.5px solid var(--border);border-radius:10px;padding:.7rem 1.2rem;font-size:.9rem;font-weight:600;text-decoration:none;transition:border-color .2s"
+            onmouseover="this.style.borderColor='var(--brand)'" onmouseout="this.style.borderColor='var(--border)'">
+            🤖 ChatGPT
+          </a>
+          <a href="https://claude.ai" target="_blank"
+            style="display:inline-flex;align-items:center;gap:.5rem;background:#fff;color:var(--ink);border:1.5px solid var(--border);border-radius:10px;padding:.7rem 1.2rem;font-size:.9rem;font-weight:600;text-decoration:none;transition:border-color .2s"
+            onmouseover="this.style.borderColor='var(--brand)'" onmouseout="this.style.borderColor='var(--border)'">
+            ✦ Claude
+          </a>
+          <a href="https://huntr.co" target="_blank"
+            style="display:inline-flex;align-items:center;gap:.5rem;background:#fff;color:var(--ink);border:1.5px solid var(--border);border-radius:10px;padding:.7rem 1.2rem;font-size:.9rem;font-weight:600;text-decoration:none;transition:border-color .2s"
+            onmouseover="this.style.borderColor='var(--brand)'" onmouseout="this.style.borderColor='var(--border)'">
+            🎯 Huntr
+          </a>
+        </div>
+      </div>
     </div>
 
     <%# Start interview CTA %>

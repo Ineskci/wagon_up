@@ -47,8 +47,8 @@ class ClaudeAnalyser
 
     ## REGRAS DE QUALIDADE
 
-    - `breakdown.passado`: referência ESPECÍFICA ao CV — empresa, cargo, anos, projecto
-    - `breakdown.futuro`: valor concreto e mensurável para o cargo-alvo
+    - `breakdown.passado`: etiqueta curta e específica — MÁXIMO 4 palavras. Exemplos: "5 anos dados L'Oréal", "Rails bootcamp Le Wagon", "Gestão de equipas". NUNCA uma frase completa.
+    - `breakdown.futuro`: resultado em frase curta — MÁXIMO 5 palavras. Exemplos: "Fullstack pronto dia um", "Decisões baseadas em dados", "Comunica com stakeholders". NUNCA mais de uma frase.
     - `mercados.insight`: 2 frases — Frase 1: tendência do sector + dado numérico. Frase 2: por que ESTE estudante especificamente.
     - `analise_lacunas.falta`: NUNCA listar habilidade que o estudante já tem. Recurso REAL com plataforma + custo + duração.
     - `mensagem_chloe`: exactamente 2 frases, use <strong> numa palavra-chave, use o primeiro nome.
@@ -69,10 +69,10 @@ class ClaudeAnalyser
         "mensagem_chloe": "<strong>Madalena, este é o seu caminho mais sólido.</strong> 5 anos lendo comportamento de utilizadores na L'Oréal valem mais do que qualquer curso de UX.",
         "justificativa": "Stack fullstack do Le Wagon combinada com 5 anos de experiência real em análise de dados.",
         "breakdown": [
-          { "icone": "📊", "passado": "5 anos analisando dados de campanhas na L'Oréal", "futuro": "Decisões de produto baseadas em dados desde o 1º sprint" },
-          { "icone": "💻", "passado": "Ruby on Rails + React — Le Wagon SP, 2 projectos publicados", "futuro": "Capacidade fullstack independente" },
-          { "icone": "🤝", "passado": "Liderou projectos com design, vendas e engenharia na L'Oréal", "futuro": "Comunicação clara com stakeholders não-técnicos" },
-          { "icone": "🎯", "passado": "Testes A/B em campanhas digitais — 3 anos de prática", "futuro": "Mentalidade de experimentação aplicada a features de produto" }
+          { "icone": "📊", "passado": "5 anos dados L'Oréal", "futuro": "Decisões produto com dados" },
+          { "icone": "💻", "passado": "Rails + React Le Wagon", "futuro": "Fullstack pronto dia um" },
+          { "icone": "🤝", "passado": "Liderou equipas na L'Oréal", "futuro": "Comunica com stakeholders" },
+          { "icone": "🎯", "passado": "Testes A/B 3 anos", "futuro": "Experimenta features rapidamente" }
         ],
         "mercados": {
           "Brasil": { "salario": "R$ 3.500 – R$ 6.000", "periodo": "por mês", "demanda": "Alta", "percentual_demanda": 76, "tendencia": "↑ +23% vagas dev júnior em SP em 2025", "tempo_contratacao": "3 – 5 semanas", "insight": "Fintechs em SP cresceram 34% em headcount em 2025, procurando perfis que unem negócio e stack técnica. <strong>O histórico da Madalena na L'Oréal e fluência em inglês</strong> eliminam as duas objeções mais comuns a formandos de bootcamp." }
