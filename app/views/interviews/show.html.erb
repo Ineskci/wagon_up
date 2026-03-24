@@ -22,15 +22,18 @@
         <% @interviews.each do |iv| %>
           <%= link_to interview_path(iv), class: "wu-session-item text-decoration-none", style: "display:flex" do %>
             <div style="flex:1">
-              <div style="font-size:.83rem;font-weight:600;color:var(--ink)"><%= iv.category.presence || "Interview" %></div>
-              <div style="font-size:.72rem;color:var(--ink-3)"><%= iv.created_at.strftime("%b %d, %Y") %></div>
+              <div style="font-size:.83rem;font-weight:600;color:var(--ink)"><%= iv.role&.title || iv.category.presence || "Entrevista" %></div>
+              <div style="font-size:.72rem;color:var(--ink-3)"><%= iv.created_at.strftime("%d %b %Y") %></div>
             </div>
-            <span class="wu-score-pill"><%= iv.overall_score ? "#{iv.overall_score}/10" : "—" %></span>
+            <% display_score = iv.overall_score || (iv.answers.loaded? ? iv.avg_score : iv.answers.where.not(score: nil).average(:score)&.round(1)) %>
+            <span class="wu-score-pill <%= score_color_class(display_score&.to_i) %>">
+              <%= display_score ? "#{display_score}/10" : "—" %>
+            </span>
           <% end %>
         <% end %>
       <% else %>
         <p style="font-size:.8rem;color:var(--ink-3);padding:.5rem .75rem;line-height:1.6">
-          Your interview history will appear here. Ready to start? 💪
+          O histórico de sessões aparecerá aqui. Pronta para começar? 💪
         </p>
       <% end %>
 
@@ -41,21 +44,21 @@
         Session Progress
       </div>
 
-      <% answered = @interview.answers.size rescue 0 %>
-      <% total = 5 %>
+      <% answered = @interview.answers.where.not(answer: nil).count %>
+      <% total = InterviewsController::TOTAL_QUESTIONS %>
 
       <div class="d-flex justify-content-between" style="font-size:.82rem;margin-bottom:.3rem">
-        <span>Questions</span>
+        <span>Perguntas</span>
         <span style="font-weight:600"><%= answered %>/<%= total %></span>
       </div>
       <div class="wu-progress mb-3">
         <div class="wu-progress-fill" data-width="<%= (answered.to_f / total * 100).round %>%" style="width:0%"></div>
       </div>
 
-      <% avg = begin; @interview.answers.map(&:score).compact.sum.to_f / [@interview.answers.map(&:score).compact.size, 1].max; rescue; 0; end %>
+      <% avg = @interview.avg_score %>
       <div class="d-flex justify-content-between" style="font-size:.82rem;margin-bottom:.3rem">
-        <span>Avg. Score</span>
-        <span style="font-weight:600"><%= avg > 0 ? "#{avg.round(1)}/10" : "—" %></span>
+        <span>Média</span>
+        <span style="font-weight:600 <%= score_color_class(avg.to_i) %>"><%= avg > 0 ? "#{avg}/10" : "—" %></span>
       </div>
       <div class="wu-progress mb-3">
         <div class="wu-progress-fill" data-width="<%= (avg / 10 * 100).round %>%" style="width:0%"></div>

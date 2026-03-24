@@ -1105,7 +1105,15 @@ body {
   border-radius: 100px;
   background: var(--brand-pale);
   color: var(--brand);
+
+  &.score-low  { background: #fce8e8; color: #c0392b; }
+  &.score-mid  { background: #fff3cd; color: #856404; }
+  &.score-high { background: #d1e7dd; color: #155724; }
 }
+
+.score-low  { color: #c0392b; }
+.score-mid  { color: #856404; }
+.score-high { color: #155724; }
 
 // ─── Home ─────────────────────────────────────────────────────────────────────
 

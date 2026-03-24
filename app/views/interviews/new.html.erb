@@ -17,13 +17,16 @@
       </div>
 
       <% if @interviews.any? %>
-        <% @interviews.each do |interview| %>
-          <%= link_to interview_path(interview), class: "wu-session-item text-decoration-none", style: "display:flex" do %>
+        <% @interviews.each do |iv| %>
+          <%= link_to interview_path(iv), class: "wu-session-item text-decoration-none", style: "display:flex" do %>
             <div style="flex:1">
-              <div style="font-size:.83rem;font-weight:600;color:var(--ink)"><%= interview.category.presence || "Entrevista" %></div>
-              <div style="font-size:.72rem;color:var(--ink-3)"><%= interview.created_at.strftime("%d %b %Y") rescue "—" %></div>
+              <div style="font-size:.83rem;font-weight:600;color:var(--ink)"><%= iv.role&.title || iv.category.presence || "Entrevista" %></div>
+              <div style="font-size:.72rem;color:var(--ink-3)"><%= iv.created_at.strftime("%d %b %Y") %></div>
             </div>
-            <span class="wu-score-pill"><%= interview.overall_score ? "#{interview.overall_score}/10" : "—" %></span>
+            <% display_score = iv.overall_score || iv.answers.where.not(score: nil).average(:score)&.round(1) %>
+            <span class="wu-score-pill <%= score_color_class(display_score&.to_i) %>">
+              <%= display_score ? "#{display_score}/10" : "—" %>
+            </span>
           <% end %>
         <% end %>
       <% else %>
