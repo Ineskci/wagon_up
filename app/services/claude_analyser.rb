@@ -30,10 +30,12 @@ class ClaudeAnalyser
        Use SEMPRE os dados reais extraídos do CV fornecido.
     4. NUNCA trunque o JSON. Todos os campos do esquema devem estar presentes.
     5. Output SEMPRE em português do Brasil. Nomes próprios preservados.
-    6. Convenção de moeda por mercado (use EXATAMENTE este formato):
-       - Brasil        → "R$ 6.000 – R$ 9.000"  (mensal, BRL)
-       - Portugal      → "€ 28.000 – € 38.000"  (anual, EUR)
-       - Internacional → "$ 55.000 – $ 80.000"  (anual, USD)
+    6. Convenção de moeda: use a moeda local de cada país analisado.
+       Exemplos: Brasil → BRL mensal (ex: "R$ 6.000 – R$ 9.000"),
+       Portugal/Europa → EUR anual (ex: "€ 28.000 – € 40.000"),
+       USA/Internacional → USD anual (ex: "$ 55.000 – $ 80.000"),
+       UK → GBP anual, Canadá → CAD anual, Austrália → AUD anual.
+       Adapte o período (mensal/anual) ao padrão local de cada país.
   SYSTEM
 
   USER_PROMPT_TEMPLATE = <<~PROMPT
@@ -42,6 +44,19 @@ class ClaudeAnalyser
     <cv_texto>
     {{CV_TEXT}}
     </cv_texto>
+
+    ## HABILIDADES SELECIONADAS PELO ESTUDANTE
+
+    O estudante confirmou as seguintes habilidades. Trate-as como verdadeiras e use-as ACTIVAMENTE na análise:
+
+    Habilidades técnicas confirmadas: {{HARD_SKILLS}}
+    Habilidades comportamentais confirmadas: {{SOFT_SKILLS}}
+
+    Regras obrigatórias para estas habilidades:
+    - Inclua TODAS as habilidades técnicas confirmadas em `analise_lacunas.tenho` de cada cargo (além das extraídas do CV).
+    - NUNCA liste em `analise_lacunas.falta` qualquer habilidade que o estudante já confirmou ter.
+    - Mencione as habilidades comportamentais confirmadas no `prompt_curriculo` de cada cargo como palavras-chave ATS (ex: "Problem Solving", "Communication", "Adaptability").
+    - Quando relevante, reflicta as habilidades comportamentais no `breakdown` (ex: "Comunica com stakeholders" para Communication, "Resolve bloqueios autonomamente" para Problem Solving, "Adapta-se a mudanças" para Adaptability).
 
     Mercados a analisar: {{TARGET_MARKETS}}
 
@@ -89,11 +104,14 @@ class ClaudeAnalyser
     }
     </exemplo>
 
-    Responde APENAS com JSON válido seguindo exactamente a estrutura do exemplo. Começa com { e termina com }. Exactamente 3 objectos em cargos_sugeridos, cada um com os mercados: Brasil, Portugal, Internacional.
+    Responde APENAS com JSON válido seguindo exactamente a estrutura do exemplo. Começa com { e termina com }. Exactamente 3 objectos em cargos_sugeridos, cada um com os mercados indicados em {{TARGET_MARKETS}}. As chaves do objecto "mercados" DEVEM ser exactamente os nomes dos países fornecidos em {{TARGET_MARKETS}}, sem tradução nem alteração.
   PROMPT
 
-  def initialize(cv_text)
+  def initialize(cv_text, hard_skills: nil, soft_skills: nil, target_markets: nil)
     @cv_text = cv_text
+    @hard_skills = hard_skills.presence || ""
+    @soft_skills = soft_skills.presence || ""
+    @target_markets = target_markets.presence || "Brazil, Portugal, United States"
   end
 
   def call
@@ -130,9 +148,9 @@ class ClaudeAnalyser
   def user_prompt
     USER_PROMPT_TEMPLATE
       .gsub("{{CV_TEXT}}", truncate_cv(@cv_text))
-      .gsub("{{HARD_SKILLS}}", "")
-      .gsub("{{PREVIOUS_ROLE}}", "")
-      .gsub("{{TARGET_MARKETS}}", "Brasil, Portugal, Internacional")
+      .gsub("{{HARD_SKILLS}}", @hard_skills)
+      .gsub("{{SOFT_SKILLS}}", @soft_skills)
+      .gsub("{{TARGET_MARKETS}}", @target_markets)
       .gsub("{{BATCH}}", "")
   end
 

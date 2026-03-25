@@ -100,45 +100,22 @@
           <div style="font-size:1rem;font-weight:700;margin-bottom:1.5rem">Skill Alignment</div>
 
           <div style="font-size:.78rem;font-weight:600;color:var(--brand);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Hard Skills</div>
-          <svg viewBox="-120 -120 240 240" style="width:100%;max-width:240px;display:block;margin:0 auto 1.5rem">
-            <defs><style>.rl{fill:none;stroke:#E4E4E7;stroke-width:1}.ra{fill:rgba(108,62,244,.15);stroke:#6C3EF4;stroke-width:1.5}.rl2{fill:none;stroke:#E4E4E7;stroke-width:.5}</style></defs>
-            <polygon points="0,-80 69.3,-40 69.3,40 0,80 -69.3,40 -69.3,-40" class="rl"/>
-            <polygon points="0,-60 51.96,-30 51.96,30 0,60 -51.96,30 -51.96,-30" class="rl"/>
-            <polygon points="0,-40 34.64,-20 34.64,20 0,40 -34.64,20 -34.64,-20" class="rl"/>
-            <line x1="0" y1="-80" x2="0" y2="80" class="rl2"/>
-            <line x1="-69.3" y1="-40" x2="69.3" y2="40" class="rl2"/>
-            <line x1="-69.3" y1="40" x2="69.3" y2="-40" class="rl2"/>
-            <polygon points="0,-72 62,-34 49,28 0,76 -41.6,24 -56.25,-37.5" class="ra"/>
-            <text x="0" y="-90" text-anchor="middle" font-size="9" fill="#71717A">Ruby</text>
-            <text x="80" y="-46" text-anchor="start" font-size="9" fill="#71717A">JS</text>
-            <text x="80" y="46" text-anchor="start" font-size="9" fill="#71717A">SQL</text>
-            <text x="0" y="96" text-anchor="middle" font-size="9" fill="#71717A">React</text>
-            <text x="-80" y="46" text-anchor="end" font-size="9" fill="#71717A">Node.js</text>
-            <text x="-80" y="-46" text-anchor="end" font-size="9" fill="#71717A">TypeScript</text>
-          </svg>
+          <% hard_skills = @analysis.hard_skills_selected.to_s.split(/,\s*/).reject(&:blank?) %>
+          <% hard_skills = %w[Ruby JavaScript SQL HTML/CSS Git Ruby\ on\ Rails] if hard_skills.blank? %>
+          <%= radar_chart_svg(hard_skills) %>
 
           <div style="font-size:.78rem;font-weight:600;color:var(--brand);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Soft Skills</div>
-          <svg viewBox="-120 -120 240 240" style="width:100%;max-width:240px;display:block;margin:0 auto 1.5rem">
-            <polygon points="0,-80 69.3,-40 69.3,40 0,80 -69.3,40 -69.3,-40" class="rl"/>
-            <polygon points="0,-60 51.96,-30 51.96,30 0,60 -51.96,30 -51.96,-30" class="rl"/>
-            <polygon points="0,-40 34.64,-20 34.64,20 0,40 -34.64,20 -34.64,-20" class="rl"/>
-            <line x1="0" y1="-80" x2="0" y2="80" class="rl2"/>
-            <line x1="-69.3" y1="-40" x2="69.3" y2="40" class="rl2"/>
-            <line x1="-69.3" y1="40" x2="69.3" y2="-40" class="rl2"/>
-            <polygon points="0,-76 58,-30 55,32 0,64 -52,28 -60,-36" class="ra"/>
-            <text x="0" y="-90" text-anchor="middle" font-size="9" fill="#71717A">Communication</text>
-            <text x="80" y="-46" text-anchor="start" font-size="9" fill="#71717A">Leadership</text>
-            <text x="80" y="46" text-anchor="start" font-size="9" fill="#71717A">Problem Solving</text>
-            <text x="0" y="96" text-anchor="middle" font-size="9" fill="#71717A">Adaptability</text>
-            <text x="-80" y="46" text-anchor="end" font-size="9" fill="#71717A">Empathy</text>
-            <text x="-80" y="-46" text-anchor="end" font-size="9" fill="#71717A">Creativity</text>
-          </svg>
+          <% soft_skills = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?) %>
+          <% soft_skills = %w[Communication Problem\ Solving Adaptability Teamwork Ownership] if soft_skills.blank? %>
+          <%= radar_chart_svg(soft_skills) %>
 
           <div style="font-size:.78rem;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">ATS Keywords</div>
           <div>
-            <% skills_list = begin; JSON.parse(@analysis.skills); rescue; @analysis.skills.to_s.split(/,\s*/); end %>
-            <% skills_list = %w[Full\ Stack REST\ API Agile MVC Git CI/CD PostgreSQL TDD] if skills_list.blank? %>
-            <% skills_list.each do |skill| %>
+            <% ai_skills = begin; JSON.parse(@analysis.skills); rescue; @analysis.skills.to_s.split(/,\s*/); end %>
+            <% ai_skills = %w[Full\ Stack REST\ API Agile MVC Git CI/CD PostgreSQL TDD] if ai_skills.blank? %>
+            <% selected_soft = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?) %>
+            <% ats_tags = (ai_skills + selected_soft).uniq %>
+            <% ats_tags.each do |skill| %>
               <span class="ats-tag"><%= skill %></span>
             <% end %>
           </div>

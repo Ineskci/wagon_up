@@ -4,7 +4,12 @@ class AnalysisJob < ApplicationJob
   def perform(analysis_id)
     analysis = Analysis.find(analysis_id)
 
-    result = ClaudeAnalyser.new(analysis.cv_text).call
+    result = ClaudeAnalyser.new(
+      analysis.cv_text,
+      hard_skills: analysis.hard_skills_selected,
+      soft_skills: analysis.soft_skills_selected,
+      target_markets: analysis.target_markets
+    ).call
 
     skills = result.dig("cargos_sugeridos", 0, "analise_lacunas", "tenho") || []
 

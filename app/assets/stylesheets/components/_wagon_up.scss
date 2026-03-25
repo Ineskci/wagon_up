@@ -1507,3 +1507,71 @@ body {
     transform: translateY(-1px);
   }
 }
+
+// ─── Country Selector ────────────────────────────────────────────────────────
+
+.country-selector {
+  position: relative;
+
+  .country-search-input {
+    width: 100%;
+    margin-top: .5rem;
+  }
+
+  .country-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.10);
+    z-index: 100;
+    overflow: hidden;
+
+    .country-option {
+      padding: .65rem 1rem;
+      font-size: .88rem;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background .15s;
+
+      &:hover { background: var(--brand-pale); }
+      &--empty { color: var(--ink-3); cursor: default; &:hover { background: none; } }
+    }
+  }
+
+  .country-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-bottom: .25rem;
+    min-height: 0;
+  }
+
+  .country-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    background: var(--brand-pale);
+    color: var(--brand);
+    border: 1.5px solid rgba(108,62,244,.2);
+    border-radius: 999px;
+    padding: .3rem .75rem .3rem .6rem;
+    font-size: .82rem;
+    font-weight: 600;
+
+    button {
+      background: none;
+      border: none;
+      color: var(--brand);
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+      opacity: .6;
+      &:hover { opacity: 1; }
+    }
+  }
+}

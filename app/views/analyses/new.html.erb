@@ -48,55 +48,54 @@
           <div class="section-label">Technical Skills</div>
           <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Select all that apply — these feed into your AI analysis.</p>
           <div id="hardSkills">
-            <span class="skill-tag active" onclick="toggleTag(this)">Ruby</span>
             <span class="skill-tag" onclick="toggleTag(this)">JavaScript</span>
             <span class="skill-tag" onclick="toggleTag(this)">SQL</span>
-            <span class="skill-tag active" onclick="toggleTag(this)">React</span>
-            <span class="skill-tag" onclick="toggleTag(this)">Python</span>
-            <span class="skill-tag" onclick="toggleTag(this)">Node.js</span>
-            <span class="skill-tag" onclick="toggleTag(this)">TypeScript</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Figma</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Git/GitHub</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Ruby on Rails</span>
             <span class="skill-tag" onclick="toggleTag(this)">HTML/CSS</span>
-            <span class="skill-tag" onclick="toggleTag(this)">Rails</span>
-            <span class="skill-tag" onclick="toggleTag(this)">Next.js</span>
-            <span class="skill-tag" onclick="toggleTag(this)">Docker</span>
-            <span class="skill-tag" onclick="toggleTag(this)">AWS</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Heroku</span>
+            <span class="skill-tag" onclick="toggleTag(this)">WebSocket</span>
           </div>
         </div>
 
         <div class="mb-4">
-          <label class="form-label-wu" style="display:block;margin-bottom:.4rem">Previous Role / Industry</label>
-          <input class="form-control-wu" style="width:100%" type="text"
-                 placeholder="e.g. Marketing Manager at L'Oréal, Teacher, Financial Analyst…"
-                 name="previous_role" id="previousRole">
-          <p style="font-size:.75rem;color:var(--ink-3);margin-top:.4rem">This helps Chloe identify your transferable strengths.</p>
+          <div class="section-label">Soft Skills</div>
+          <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Select up to 5 — these feed into your AI analysis.</p>
+          <div id="softSkills">
+            <span class="skill-tag" onclick="toggleTag(this)">Problem Solving</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Communication</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Adaptability</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Teamwork</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Time Management</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Critical Thinking</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Resilience</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Empathy</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Ownership</span>
+            <span class="skill-tag" onclick="toggleTag(this)">Curiosity</span>
+          </div>
         </div>
 
-        <div class="row g-3 mb-4">
-          <div class="col-12 col-sm-6">
-            <label class="form-label-wu" style="display:block;margin-bottom:.4rem">Full Name</label>
-            <input class="form-control-wu" style="width:100%;background:#f9f9f9" type="text"
-                   value="<%= current_user.name %>" readonly>
+<div class="mb-4">
+          <div class="section-label">Target Job Markets</div>
+          <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Select up to 3 countries where you'd like to work.</p>
+
+          <div class="country-selector">
+            <div class="country-chips" id="selectedCountries"></div>
+            <input type="text" class="form-control-wu country-search-input" id="countrySearch"
+                   placeholder="Search a country…" autocomplete="off">
+            <div class="country-dropdown" id="countryDropdown" style="display:none"></div>
           </div>
-          <div class="col-12 col-sm-6">
-            <label class="form-label-wu" style="display:block;margin-bottom:.4rem">Email</label>
-            <input class="form-control-wu" style="width:100%;background:#f9f9f9" type="email"
-                   value="<%= current_user.email %>" readonly>
-          </div>
-          <div class="col-12 col-sm-6">
-            <label class="form-label-wu" style="display:block;margin-bottom:.4rem">LinkedIn URL <span style="font-weight:400;color:var(--ink-3)">(optional)</span></label>
-            <input class="form-control-wu" style="width:100%" type="url"
-                   placeholder="https://linkedin.com/in/yourprofile" name="linkedin_url">
-          </div>
-          <div class="col-12 col-sm-6">
-            <label class="form-label-wu" style="display:block;margin-bottom:.4rem">GitHub Portfolio <span style="font-weight:400;color:var(--ink-3)">(optional)</span></label>
-            <input class="form-control-wu" style="width:100%" type="url"
-                   placeholder="https://github.com/yourusername" name="github_url">
-          </div>
+          <div id="countryLimitMsg" style="display:none;font-size:.78rem;color:#b45309;margin-top:.4rem">⚠️ Maximum 3 markets selected.</div>
         </div>
+
+        <%= f.hidden_field :hard_skills_selected, id: "hardSkillsInput" %>
+        <%= f.hidden_field :soft_skills_selected, id: "softSkillsInput" %>
+        <%= f.hidden_field :target_markets, id: "targetMarketsInput" %>
 
         <div class="d-flex gap-3">
           <button type="button" class="btn-outline-brand" onclick="goSetupStep1()">← Back</button>
-          <%= f.submit "Analyse my profile →", class: "btn-primary-full flex-grow-1" %>
+          <%= f.submit "Analyse my profile →", class: "btn-primary-full flex-grow-1", onclick: "collectSkills()" %>
         </div>
       </div>
 

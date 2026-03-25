@@ -42,11 +42,25 @@
 
     <%# Market Data tabs %>
     <% if @role.market_fit.present? && @role.market_fit.is_a?(Hash) %>
-      <% markets = [
-           ["Brasil",   "🇧🇷", @role.market_fit["Brasil"]],
-           ["Portugal", "🇵🇹", @role.market_fit["Portugal"]],
-           ["USA",      "🇺🇸", @role.market_fit["Internacional"]]
-         ].select { |_, _, data| data.present? } %>
+      <% country_flags = {
+           "Brazil" => "🇧🇷", "Portugal" => "🇵🇹", "Internacional" => "🌍",
+           "United States" => "🇺🇸", "France" => "🇫🇷", "Germany" => "🇩🇪",
+           "Spain" => "🇪🇸", "United Kingdom" => "🇬🇧", "Canada" => "🇨🇦",
+           "Australia" => "🇦🇺", "Netherlands" => "🇳🇱", "Switzerland" => "🇨🇭",
+           "Ireland" => "🇮🇪", "Sweden" => "🇸🇪", "Denmark" => "🇩🇰",
+           "Norway" => "🇳🇴", "Finland" => "🇫🇮", "Belgium" => "🇧🇪",
+           "Austria" => "🇦🇹", "Italy" => "🇮🇹", "Poland" => "🇵🇱",
+           "Singapore" => "🇸🇬", "Japan" => "🇯🇵", "New Zealand" => "🇳🇿",
+           "UAE" => "🇦🇪", "Mexico" => "🇲🇽", "Argentina" => "🇦🇷",
+           "Chile" => "🇨🇱", "Colombia" => "🇨🇴", "Luxembourg" => "🇱🇺",
+           "Israel" => "🇮🇱", "South Korea" => "🇰🇷", "South Africa" => "🇿🇦",
+           "Estonia" => "🇪🇪", "Malta" => "🇲🇹", "Greece" => "🇬🇷",
+           "Turkey" => "🇹🇷", "Indonesia" => "🇮🇩", "India" => "🇮🇳",
+           "China" => "🇨🇳", "Hong Kong" => "🇭🇰"
+         } %>
+      <% markets = @role.market_fit.map { |country, data|
+           [country, country_flags[country] || "🌍", data]
+         }.select { |_, _, data| data.present? } %>
 
       <% if markets.any? %>
         <div class="wu-card mb-4 sr d2" data-controller="market-tabs">

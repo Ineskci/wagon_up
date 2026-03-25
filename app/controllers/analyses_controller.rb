@@ -28,6 +28,10 @@ class AnalysesController < ApplicationController
       render :new, status: :unprocessable_entity and return
     end
 
+    @analysis.hard_skills_selected = params[:analysis][:hard_skills_selected]
+    @analysis.soft_skills_selected = params[:analysis][:soft_skills_selected]
+    @analysis.target_markets = params[:analysis][:target_markets].presence || "Brazil, Portugal, United States"
+
     if @analysis.save
       @analysis.file.attach(params[:analysis][:file])
 
@@ -49,6 +53,6 @@ class AnalysesController < ApplicationController
   private
 
   def analysis_params
-    params.require(:analysis).permit(:cv_text, :file)
+    params.require(:analysis).permit(:cv_text, :file, :hard_skills_selected, :soft_skills_selected, :target_markets)
   end
 end

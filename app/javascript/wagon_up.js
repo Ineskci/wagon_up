@@ -1,6 +1,11 @@
 // ─── Global functions (via window — required because importmap uses ES modules) ─
 
 window.toggleTag = function(el) {
+  const isSoftSkill = el.closest("#softSkills");
+  if (isSoftSkill && !el.classList.contains("active")) {
+    const selected = document.querySelectorAll("#softSkills .skill-tag.active").length;
+    if (selected >= 5) return;
+  }
   el.classList.toggle("active");
 };
 
@@ -60,9 +65,128 @@ window.handleCVUpload = function(input) {
   dropZone.onclick = () => newInput.click();
 };
 
+// ─── Country selector ────────────────────────────────────────────────────────
+
+const COUNTRIES = [
+  { name: "Brazil", code: "BR" }, { name: "Portugal", code: "PT" },
+  { name: "United States", code: "US" }, { name: "France", code: "FR" },
+  { name: "Germany", code: "DE" }, { name: "Spain", code: "ES" },
+  { name: "United Kingdom", code: "GB" }, { name: "Canada", code: "CA" },
+  { name: "Australia", code: "AU" }, { name: "Netherlands", code: "NL" },
+  { name: "Switzerland", code: "CH" }, { name: "Ireland", code: "IE" },
+  { name: "Sweden", code: "SE" }, { name: "Denmark", code: "DK" },
+  { name: "Norway", code: "NO" }, { name: "Finland", code: "FI" },
+  { name: "Belgium", code: "BE" }, { name: "Austria", code: "AT" },
+  { name: "Italy", code: "IT" }, { name: "Poland", code: "PL" },
+  { name: "Singapore", code: "SG" }, { name: "Japan", code: "JP" },
+  { name: "New Zealand", code: "NZ" }, { name: "UAE", code: "AE" },
+  { name: "Mexico", code: "MX" }, { name: "Argentina", code: "AR" },
+  { name: "Chile", code: "CL" }, { name: "Colombia", code: "CO" },
+  { name: "Luxembourg", code: "LU" }, { name: "Israel", code: "IL" },
+  { name: "South Korea", code: "KR" }, { name: "South Africa", code: "ZA" },
+  { name: "Estonia", code: "EE" }, { name: "Malta", code: "MT" },
+  { name: "Greece", code: "GR" }, { name: "Turkey", code: "TR" },
+  { name: "Indonesia", code: "ID" }, { name: "India", code: "IN" },
+  { name: "China", code: "CN" }, { name: "Hong Kong", code: "HK" },
+];
+
+function countryFlag(code) {
+  return code.toUpperCase().replace(/./g, c =>
+    String.fromCodePoint(c.charCodeAt(0) + 127397)
+  );
+}
+
+function initCountrySelector() {
+  const searchInput = document.getElementById("countrySearch");
+  const dropdown = document.getElementById("countryDropdown");
+  const chipsContainer = document.getElementById("selectedCountries");
+  const limitMsg = document.getElementById("countryLimitMsg");
+  if (!searchInput || !dropdown || !chipsContainer) return;
+
+  let selected = [];
+
+  function updateHiddenInput() {
+    const input = document.getElementById("targetMarketsInput");
+    if (input) input.value = selected.map(c => c.name).join(", ");
+  }
+
+  function renderChips() {
+    chipsContainer.innerHTML = "";
+    selected.forEach(country => {
+      const chip = document.createElement("span");
+      chip.className = "country-chip";
+      chip.innerHTML = `${countryFlag(country.code)} ${country.name} <button type="button" onclick="removeCountry('${country.name}')" aria-label="Remove">×</button>`;
+      chipsContainer.appendChild(chip);
+    });
+    updateHiddenInput();
+  }
+
+  function renderDropdown(query) {
+    const filtered = COUNTRIES.filter(c =>
+      c.name.toLowerCase().includes(query.toLowerCase()) &&
+      !selected.find(s => s.name === c.name)
+    ).slice(0, 8);
+
+    dropdown.innerHTML = "";
+    if (!filtered.length) {
+      dropdown.innerHTML = `<div class="country-option country-option--empty">No results</div>`;
+    } else {
+      filtered.forEach(country => {
+        const opt = document.createElement("div");
+        opt.className = "country-option";
+        opt.innerHTML = `${countryFlag(country.code)} ${country.name}`;
+        opt.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          if (selected.length >= 3) {
+            if (limitMsg) { limitMsg.style.display = "block"; setTimeout(() => limitMsg.style.display = "none", 3000); }
+            return;
+          }
+          selected.push(country);
+          renderChips();
+          searchInput.value = "";
+          dropdown.style.display = "none";
+        });
+        dropdown.appendChild(opt);
+      });
+    }
+    dropdown.style.display = "block";
+  }
+
+  window.removeCountry = function(name) {
+    selected = selected.filter(c => c.name !== name);
+    renderChips();
+  };
+
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.trim();
+    if (q.length > 0) renderDropdown(q);
+    else dropdown.style.display = "none";
+  });
+
+  searchInput.addEventListener("focus", () => {
+    if (searchInput.value.trim().length > 0) renderDropdown(searchInput.value.trim());
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".country-selector")) dropdown.style.display = "none";
+  });
+}
+
+window.collectSkills = function() {
+  const hard = [...document.querySelectorAll("#hardSkills .skill-tag.active")].map(el => el.textContent);
+  const soft = [...document.querySelectorAll("#softSkills .skill-tag.active")].map(el => el.textContent);
+  const hardInput = document.getElementById("hardSkillsInput");
+  const softInput = document.getElementById("softSkillsInput");
+  if (hardInput) hardInput.value = hard.join(", ");
+  if (softInput) softInput.value = soft.join(", ");
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 function initWagonUp() {
+
+  // 0. Country selector
+  initCountrySelector();
 
   // 1. Navbar scroll shadow
   const nav = document.getElementById("wuNav");
