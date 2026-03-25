@@ -15,7 +15,7 @@
         <div>
           <div style="font-size:.78rem;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Your AI Analysis</div>
           <h1 style="font-size:2.2rem;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:.4rem"><%= current_user.name %></h1>
-          <p style="color:rgba(255,255,255,.6);font-size:.95rem">A Chloe está a analisar o teu CV...</p>
+          <p style="color:rgba(255,255,255,.6);font-size:.95rem">Chloe is analysing your CV...</p>
         </div>
         <div class="match-badge" style="opacity:.4">
           <span class="match-pct">--</span>
@@ -28,10 +28,10 @@
   <div class="container py-7 text-center">
     <div style="max-width:480px;margin:0 auto;padding:4rem 0">
       <div style="font-size:3rem;margin-bottom:1.5rem">✦</div>
-      <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:.75rem">A Chloe está a trabalhar</h2>
+      <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:.75rem">Chloe is working on it</h2>
       <p style="color:var(--ink-3);font-size:.9rem;line-height:1.7;margin-bottom:2rem">
-        Estamos a analisar o teu CV com IA. Isto demora cerca de 1–2 minutos.<br>
-        A página actualiza automaticamente quando estiver pronto.
+        We're analysing your CV with AI. This takes about 1–2 minutes.<br>
+        The page will refresh automatically when ready.
       </p>
       <div style="display:flex;justify-content:center;gap:.5rem">
         <span style="width:8px;height:8px;border-radius:50%;background:var(--brand);animation:pulse 1.2s ease-in-out infinite"></span>
@@ -53,9 +53,9 @@
   <div class="container py-7 text-center">
     <div style="max-width:480px;margin:4rem auto">
       <div style="font-size:3rem;margin-bottom:1rem">⚠️</div>
-      <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:.5rem">Algo correu mal</h2>
-      <p style="color:var(--ink-3);font-size:.9rem">Ocorreu um erro ao processar o teu CV. Tenta de novo.</p>
-      <%= link_to "Submeter outro CV", new_analysis_path, class: "btn-primary mt-3 d-inline-block" %>
+      <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:.5rem">Something went wrong</h2>
+      <p style="color:var(--ink-3);font-size:.9rem">An error occurred while processing your CV. Please try again.</p>
+      <%= link_to "Submit another CV", new_analysis_path, class: "btn-primary mt-3 d-inline-block" %>
     </div>
   </div>
 
