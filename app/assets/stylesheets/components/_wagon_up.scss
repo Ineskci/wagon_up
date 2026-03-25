@@ -1427,6 +1427,63 @@ body {
 .match-lbl { font-size: .72rem; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .08em; margin-top: 4px; display: block; }
 .match-sub { font-size: .75rem; color: #a78bfa; margin-top: .5rem; display: block; }
 
+.skill-icon-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+}
+
+.skill-section-label {
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 1rem;
+  padding-bottom: .5rem;
+  border-bottom: 1.5px solid;
+}
+
+.skill-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .6rem;
+}
+
+.skill-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+}
+
+.skill-icon-box {
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  i[class*="devicon"] { font-size: 2rem; }
+  i[class*="fa-"] { font-size: 1.5rem; }
+}
+
+.skill-icon-name {
+  font-size: .72rem;
+  color: var(--ink-2);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.interview-cta-banner {
+  background: #0f0f1e;
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  margin: 0 1.5rem 2rem;
+}
+
 .chloe-analysis {
   background: var(--brand-pale);
   border: 1px solid var(--brand-dim);

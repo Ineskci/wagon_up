@@ -68,12 +68,6 @@
           <div style="font-size:.78rem;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Your AI Analysis</div>
           <h1 style="font-size:2.2rem;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:.4rem"><%= current_user.name %></h1>
           <p style="color:rgba(255,255,255,.6);font-size:.85rem;line-height:1.6"><%= @analysis.summary.present? ? @analysis.summary : "Full Stack Developer & Tech Problem Solver" %></p>
-          <% top_role = @analysis.roles.order(:position).first %>
-          <% if top_role %>
-            <%= link_to "Start interview prep →", new_role_interview_path(top_role), class: "btn-primary mt-3 d-inline-block", data: { turbo_frame: "_top" } %>
-          <% else %>
-            <span class="btn-primary mt-3 d-inline-block" style="opacity:.5;cursor:not-allowed">Start interview prep →</span>
-          <% end %>
         </div>
         <div class="match-badge">
           <span class="match-pct">92%</span>
@@ -86,37 +80,65 @@
 
   <div class="container py-7">
 
-    <div class="chloe-analysis mb-4 sr">
-      <div style="font-size:1.2rem;flex-shrink:0">✦</div>
-      <div>
-        <div style="font-size:.78rem;font-weight:700;color:var(--brand);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem">Chloe's Analysis</div>
-        <p style="font-size:.88rem;color:var(--ink-2);line-height:1.7;margin:0"><%= @analysis.summary.present? ? @analysis.summary : "Chloe is analysing your profile. Check back shortly." %></p>
-      </div>
-    </div>
-
-    <div class="row g-4">
+<div class="row g-4">
       <div class="col-12 col-lg-5 sr">
-        <div class="feat-card h-100">
-          <div style="font-size:1rem;font-weight:700;margin-bottom:1.5rem">Skill Alignment</div>
+        <%
+          hard_skill_icons = {
+            "JavaScript"    => "devicon-javascript-plain colored",
+            "SQL"           => "devicon-postgresql-plain colored",
+            "Figma"         => "devicon-figma-plain colored",
+            "Git/GitHub"    => "devicon-github-original colored",
+            "Ruby on Rails" => "devicon-rails-plain colored",
+            "HTML/CSS"      => "devicon-html5-plain colored",
+            "Heroku"        => "devicon-heroku-original colored",
+            "WebSocket"     => "devicon-nodejs-plain colored",
+          }
+          soft_skill_icons = {
+            "Problem Solving"  => "🧩",
+            "Communication"    => "💬",
+            "Adaptability"     => "🌱",
+            "Teamwork"         => "🤝",
+            "Time Management"  => "⏱️",
+            "Critical Thinking"=> "🔍",
+            "Resilience"       => "💪",
+            "Empathy"          => "💛",
+            "Ownership"        => "🎯",
+            "Curiosity"        => "💡",
+          }
+          hard_skills = @analysis.hard_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
+          hard_skills = ["JavaScript", "Ruby on Rails", "HTML/CSS", "SQL", "Git/GitHub", "Figma", "Heroku"] if hard_skills.blank?
+          soft_skills = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
+          soft_skills = ["Problem Solving", "Communication", "Adaptability", "Teamwork", "Ownership"] if soft_skills.blank?
+        %>
 
-          <div style="font-size:.78rem;font-weight:600;color:var(--brand);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Hard Skills</div>
-          <% hard_skills = @analysis.hard_skills_selected.to_s.split(/,\s*/).reject(&:blank?) %>
-          <% hard_skills = %w[Ruby JavaScript SQL HTML/CSS Git Ruby\ on\ Rails] if hard_skills.blank? %>
-          <%= radar_chart_svg(hard_skills) %>
+        <div class="skill-icon-card mb-3">
+          <div class="skill-section-label" style="color:var(--brand);border-color:var(--brand-dim)">Hard Skills</div>
+          <div class="skill-icon-grid">
+            <% hard_skills.each do |skill| %>
+              <div class="skill-icon-item">
+                <div class="skill-icon-box">
+                  <% if (cls = hard_skill_icons[skill]) %>
+                    <i class="<%= cls %>"></i>
+                  <% else %>
+                    <i class="fa-solid fa-code" style="color:var(--brand)"></i>
+                  <% end %>
+                </div>
+                <span class="skill-icon-name"><%= skill %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
 
-          <div style="font-size:.78rem;font-weight:600;color:var(--brand);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Soft Skills</div>
-          <% soft_skills = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?) %>
-          <% soft_skills = %w[Communication Problem\ Solving Adaptability Teamwork Ownership] if soft_skills.blank? %>
-          <%= radar_chart_svg(soft_skills) %>
-
-          <div style="font-size:.78rem;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">ATS Keywords</div>
-          <div>
-            <% ai_skills = begin; JSON.parse(@analysis.skills); rescue; @analysis.skills.to_s.split(/,\s*/); end %>
-            <% ai_skills = %w[Full\ Stack REST\ API Agile MVC Git CI/CD PostgreSQL TDD] if ai_skills.blank? %>
-            <% selected_soft = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?) %>
-            <% ats_tags = (ai_skills + selected_soft).uniq %>
-            <% ats_tags.each do |skill| %>
-              <span class="ats-tag"><%= skill %></span>
+        <div class="skill-icon-card">
+          <div class="skill-section-label" style="color:#16a34a;border-color:#dcfce7">Soft Skills</div>
+          <div class="skill-icon-grid">
+            <% soft_skills.each do |skill| %>
+              <div class="skill-icon-item">
+                <div class="skill-icon-box">
+                  <span style="font-size:1.6rem"><%= soft_skill_icons[skill] || "✨" %></span>
+                </div>
+                <span class="skill-icon-name"><%= skill %></span>
+              </div>
             <% end %>
           </div>
         </div>
@@ -155,6 +177,23 @@
       </div>
     </div>
 
+  </div>
+
+  <div class="interview-cta-banner">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <div style="font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:.35rem">Ready to practice for your interviews?</div>
+          <div style="font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.6">Chloe will ask you questions tailored to <strong style="color:rgba(255,255,255,.85)">your profile and your target role</strong> — and score each answer in real time.</div>
+        </div>
+        <% top_role = @analysis.roles.order(:position).first %>
+        <% if top_role %>
+          <%= link_to "Start interview prep →", new_role_interview_path(top_role), class: "btn-primary", style: "white-space:nowrap;padding:.85rem 2rem;font-size:1rem", data: { turbo_frame: "_top" } %>
+        <% else %>
+          <span class="btn-primary" style="white-space:nowrap;padding:.85rem 2rem;font-size:1rem;opacity:.5;cursor:not-allowed">Start interview prep →</span>
+        <% end %>
+      </div>
+    </div>
   </div>
 
 <% end %>
