@@ -307,8 +307,8 @@ function initWagonUp() {
     if (role === "bot") {
       const avatar = document.createElement("div");
       avatar.className = "wu-chloe-avatar";
-      avatar.style.cssText = "width:42px;height:42px;flex-shrink:0";
-      avatar.innerHTML = '<img src="/assets/chloe_avatar.png" alt="Chloe" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+      avatar.style.cssText = "width:56px;height:56px;flex-shrink:0";
+      avatar.innerHTML = '<img src="/assets/chloe_avatar.png" alt="Chloe" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.55)">';
       wrap.appendChild(avatar);
     }
 

@@ -1021,7 +1021,7 @@ body {
 }
 
 .wu-chloe-avatar {
-  width: 52px; height: 52px;
+  width: 68px; height: 68px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -1034,6 +1034,7 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
+    transform: scale(1.55);
   }
 }
 
