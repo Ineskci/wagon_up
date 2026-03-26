@@ -11,55 +11,55 @@ class InterviewsController < ApplicationController
   TOTAL_QUESTIONS     = TECHNICAL_QUESTIONS + PERSONAL_QUESTIONS
 
   SYSTEM_PROMPT = <<~PROMPT
-    IMPORTANTE: RESPONDA EXCLUSIVAMENTE EM PORTUGUÊS DO BRASIL. NUNCA use inglês.
+    IMPORTANT: RESPOND EXCLUSIVELY IN ENGLISH. NEVER use Portuguese.
 
     ## Persona
-    Você é Chloé 2.0, coach de entrevistas do Le Wagon Brasil.
+    You are Chloé 2.0, interview coach at WagonUP.
 
-    ## Regras OBRIGATÓRIAS
-    - SEMPRE em português do Brasil — sem excepção
-    - SEMPRE uma mensagem por vez
-    - NUNCA coloque feedback e pergunta na mesma mensagem
-    - NUNCA use labels como "Pergunta:", "Feedback:", "Técnica:", "Pessoal:" antes do texto
-    - Escreva directamente sem prefixos ou títulos
+    ## MANDATORY RULES
+    - ALWAYS in English — no exceptions
+    - ALWAYS one message at a time
+    - NEVER put feedback and a question in the same message
+    - NEVER use labels like "Question:", "Feedback:", "Technical:", "Personal:" before the text
+    - Write directly without prefixes or titles
 
-    ## Estrutura da entrevista (#{TOTAL_QUESTIONS} perguntas no total)
-    - #{TECHNICAL_QUESTIONS} perguntas técnicas sobre tecnologias relevantes para o cargo
-    - #{PERSONAL_QUESTIONS} perguntas pessoais sobre motivação, carreira e objectivos
+    ## Interview structure (#{TOTAL_QUESTIONS} questions total)
+    - #{TECHNICAL_QUESTIONS} technical questions about technologies relevant to the role
+    - #{PERSONAL_QUESTIONS} personal questions about motivation, career and goals
 
-    ## Perguntas técnicas
-    - Perguntas abertas — o candidato responde livremente
-    - Se a resposta estiver correcta: parabenize de forma calorosa e breve (1 linha)
-    - Se estiver incorrecta: corrija de forma calorosa. Explique a resposta correcta em máximo 1 linha
-    - NUNCA faças perguntas de follow-up. Depois do feedback, PARE.
+    ## Technical questions
+    - Open-ended questions — the candidate answers freely
+    - If the answer is correct: congratulate warmly and briefly (1 line)
+    - If incorrect: correct warmly. Explain the correct answer in at most 1 line
+    - NEVER ask follow-up questions. After the feedback, STOP.
 
-    ## Perguntas pessoais
-    - Perguntas abertas sobre motivação, transição de carreira e objectivos profissionais
-    - Feedback sempre positivo e encorajador — não há resposta errada
-    - Conecta a resposta do candidato ao cargo e à sua jornada no Le Wagon
+    ## Personal questions
+    - Open-ended questions about motivation, career transition and professional goals
+    - Feedback always positive and encouraging — there is no wrong answer
+    - Connect the candidate's answer to the role and their journey at Le Wagon
 
-    ## Critérios de scoring OBRIGATÓRIOS (0-10)
-    Sê HONESTA. Dar scores altos a respostas fracas NÃO ajuda o candidato.
-    - Score 0: resposta vazia, evasiva, "não sei", menos de 10 palavras sem esforço real
-    - Score 1-3: vaga, genérica, sem exemplos concretos
-    - Score 4-5: razoável mas sem profundidade nem estrutura
-    - Score 6-7: boa, com exemplos e transferable skills demonstradas
-    - Score 8-9: excelente, estruturada (STAR), com métricas ou impacto claro
-    - Score 10: perfeita — raramente dada
-    "Não sei" DEVE receber score 0. Nunca arredondas para cima para não desmotivar.
+    ## MANDATORY scoring criteria (0-10)
+    Be HONEST. Giving high scores to weak answers does NOT help the candidate.
+    - Score 0: empty, evasive answer, "I don't know", fewer than 10 words with no real effort
+    - Score 1-3: vague, generic, no concrete examples
+    - Score 4-5: reasonable but lacking depth or structure
+    - Score 6-7: good, with examples and demonstrated transferable skills
+    - Score 8-9: excellent, structured (STAR), with clear metrics or impact
+    - Score 10: perfect — rarely given
+    "I don't know" MUST receive score 0. Never round up so as not to demotivate.
 
-    ## Formato
-    - Sem labels, sem títulos, sem prefixos
-    - Feedback: máximo 1-2 linhas
-    - Perguntas: directas e concisas
+    ## Format
+    - No labels, no titles, no prefixes
+    - Feedback: maximum 1-2 lines
+    - Questions: direct and concise
   PROMPT
 
-  TECHNICAL_TOPICS = ["Ruby on Rails", "JavaScript", "SQL"].freeze
-  PERSONAL_TOPICS  = ["motivação e transição de carreira para tech", "pontos fortes e objectivos profissionais"].freeze
-  QUESTION_FORMAT  = "Faça uma pergunta directa e concisa. Não uses opções A, B, C — o candidato responde livremente.".freeze
+  TECHNICAL_TOPICS = ["Ruby on Rails", "HTML", "CSS", "JavaScript", "SQL"].freeze
+  PERSONAL_TOPICS  = ["motivation and career transition into tech", "strengths and professional goals"].freeze
+  QUESTION_FORMAT  = "Ask a direct and concise question. Do not use options A, B, C — the candidate answers freely.".freeze
 
   # Respostas evasivas que recebem score 0 automaticamente sem chamar a API
-  EVASIVE_PATTERN = /\A\s*\z|não\s*sei|nao\s*sei|sei\s*l[aá]|^passo$|^skip$|^nada$|^idk$|i\s*don'?t\s*know|no\s*idea|n\s*sei|^ns$/i
+  EVASIVE_PATTERN = /\A\s*\z|i\s*don'?t\s*know|no\s*idea|^idk$|^skip$|^nothing$|^pass$|^n\/a$/i
 
   # ── Actions ───────────────────────────────────────────────────────────────
 
@@ -87,7 +87,7 @@ class InterviewsController < ApplicationController
         @interview.destroy
         respond_to do |format|
           format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: { error: "Não foi possível gerar a primeira pergunta. Tenta novamente." }, status: :unprocessable_entity }
+          format.json { render json: { error: "Could not generate the first question. Please try again." }, status: :unprocessable_entity }
         end
         return
       end
@@ -99,7 +99,7 @@ class InterviewsController < ApplicationController
     else
       respond_to do |format|
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: { error: "Não foi possível criar a entrevista" }, status: :unprocessable_entity }
+        format.json { render json: { error: "Could not create the interview" }, status: :unprocessable_entity }
       end
     end
   end
@@ -176,10 +176,10 @@ class InterviewsController < ApplicationController
   end
 
   def zero_score_feedback
-    "Score 0/10. Numa entrevista real esta resposta seria eliminatória. " \
-    "Mesmo sem experiência directa, usa o método STAR: descreve uma Situação similar, " \
-    "a Tarefa que tinhas, a Acção que tomaste e o Resultado. " \
-    "Dá sempre um exemplo — pode ser de um projecto pessoal ou do Le Wagon. Tenta de novo!"
+    "Score 0/10. In a real interview, this answer would be disqualifying. " \
+    "Even without direct experience, use the STAR method: describe a similar Situation, " \
+    "the Task you had, the Action you took and the Result. " \
+    "Always give an example — it can be from a personal project or from Le Wagon. Try again!"
   end
 
   # ── Lógica de sequência ───────────────────────────────────────────────────
@@ -228,45 +228,45 @@ class InterviewsController < ApplicationController
   # ── Prompts ───────────────────────────────────────────────────────────────
 
   def first_question_prompt
-    "Faça a primeira pergunta técnica sobre #{TECHNICAL_TOPICS.first} " \
-    "para o cargo de #{@role.title}. #{QUESTION_FORMAT}"
+    "Ask the first technical question about #{TECHNICAL_TOPICS.first} " \
+    "for the #{@role.title} role. #{QUESTION_FORMAT}"
   end
 
   def feedback_prompt(answer)
     if @user_count <= TECHNICAL_QUESTIONS
-      "A pergunta foi: '#{answer.question}'.\n" \
-      "A resposta do candidato foi: '#{answer.answer}'.\n\n" \
-      "Avalia a resposta com um score de 0 a 10 seguindo os critérios do sistema.\n" \
-      "Se estiver correcta: parabenize de forma calorosa e breve (1 linha).\n" \
-      "Se estiver incorrecta: corrija de forma calorosa e encorajadora. " \
-      "Explique a resposta correcta em máximo 1 linha.\n" \
-      "NÃO faças nenhuma pergunta. NÃO digas 'Vamos para a próxima'."
+      "The question was: '#{answer.question}'.\n" \
+      "The candidate's answer was: '#{answer.answer}'.\n\n" \
+      "Evaluate the answer with a score from 0 to 10 following the system criteria.\n" \
+      "If correct: congratulate warmly and briefly (1 line).\n" \
+      "If incorrect: correct warmly and encouragingly. " \
+      "Explain the correct answer in at most 1 line.\n" \
+      "Do NOT ask any question. Do NOT say 'Let's move on'."
     else
-      "A pergunta foi: '#{answer.question}'.\n" \
-      "A resposta do candidato foi: '#{answer.answer}'.\n\n" \
-      "Dê um feedback caloroso e encorajador sobre a resposta (máximo 2 linhas). " \
-      "Valorize a perspectiva do candidato e conecta com o cargo de #{@role.title}.\n" \
-      "NÃO faças nenhuma pergunta. NÃO digas 'Vamos para a próxima'."
+      "The question was: '#{answer.question}'.\n" \
+      "The candidate's answer was: '#{answer.answer}'.\n\n" \
+      "Give warm and encouraging feedback about the answer (maximum 2 lines). " \
+      "Value the candidate's perspective and connect it to the #{@role.title} role.\n" \
+      "Do NOT ask any question. Do NOT say 'Let's move on'."
     end
   end
 
   def next_question_prompt
     if @user_count < TECHNICAL_QUESTIONS
       topic = TECHNICAL_TOPICS[@user_count]
-      "Faça a próxima pergunta técnica sobre #{topic} " \
-      "para o cargo de #{@role.title}. #{QUESTION_FORMAT}"
+      "Ask the next technical question about #{topic} " \
+      "for the #{@role.title} role. #{QUESTION_FORMAT}"
     else
       personal_index = @user_count - TECHNICAL_QUESTIONS
       topic = PERSONAL_TOPICS[personal_index]
-      "Faça uma pergunta pessoal sobre #{topic} para o candidato ao cargo de #{@role.title}. " \
-      "A pergunta deve ser aberta e encorajadora. Não uses opções A, B, C."
+      "Ask a personal question about #{topic} for the candidate applying to the #{@role.title} role. " \
+      "The question should be open-ended and encouraging. Do not use options A, B, C."
     end
   end
 
   def summary_prompt
-    "Com base em todas as respostas do candidato às #{TOTAL_QUESTIONS} perguntas, " \
-    "dê um feedback geral honesto para o cargo de #{@role.title}. " \
-    "Destaca os pontos fortes e uma única sugestão de melhoria. Máximo 4 linhas."
+    "Based on all the candidate's answers to the #{TOTAL_QUESTIONS} questions, " \
+    "give honest overall feedback for the #{@role.title} role. " \
+    "Highlight the strengths and a single improvement suggestion. Maximum 4 lines."
   end
 
   # ── API calls ─────────────────────────────────────────────────────────────
@@ -306,7 +306,7 @@ class InterviewsController < ApplicationController
   end
 
   def system_with_role_context
-    SYSTEM_PROMPT + "\n\nCargo entrevistado: #{@role&.title}. #{@role&.justification}"
+    SYSTEM_PROMPT + "\n\nRole being interviewed for: #{@role&.title}. #{@role&.justification}"
   end
 
   def build_conversation_history
@@ -323,7 +323,7 @@ class InterviewsController < ApplicationController
     if (match = feedback_text.match(/\b([0-9]|10)\s*\/\s*10\b/))
       return match[1].to_i
     end
-    positive = feedback_text.match?(/parabéns|correcto|excelente|muito bem|ótimo|perfeito|certo/i)
+    positive = feedback_text.match?(/congratulations|correct|excellent|well done|great|perfect|right/i)
     positive ? rand(7..9) : rand(3..5)
   end
 
