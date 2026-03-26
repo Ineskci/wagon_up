@@ -84,7 +84,7 @@
 
     <div class="wu-chat-header">
       <div class="d-flex align-items-center gap-3">
-        <div class="wu-chloe-avatar">🤖</div>
+        <div class="wu-chloe-avatar"><%= image_tag "chloe_avatar.png", alt: "Chloe" %></div>
         <div>
           <div style="font-weight:700">Chloe 2.0</div>
           <div style="font-size:.75rem;color:var(--ink-3)">
@@ -96,7 +96,7 @@
 
     <div class="wu-chat-messages" data-chat-target="messages">
       <div class="wu-msg bot">
-        <div class="wu-chloe-avatar" style="width:32px;height:32px;font-size:.85rem;flex-shrink:0">🤖</div>
+        <div class="wu-chloe-avatar" style="width:32px;height:32px;flex-shrink:0"><%= image_tag "chloe_avatar.png", alt: "Chloe" %></div>
         <div class="wu-msg-bubble">
           Hi, <%= current_user.name.split.first %>!
           <% if @role %>
