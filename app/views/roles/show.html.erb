@@ -214,12 +214,12 @@
     <%# AI CV Generator %>
     <div class="sr d4" style="margin-bottom:1.5rem">
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
-        <span style="font-size:.72rem;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap">AI CV Generator</span>
+        <span style="font-size:.72rem;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap">CV Generator</span>
         <div style="flex:1;height:1px;background:var(--border)"></div>
       </div>
 
       <div class="wu-prompt-box">
-        <div style="font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:.3rem">Your tailored CV, ready to download</div>
+        <div style="font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:.3rem">Your CV is ready to download</div>
         <p style="font-size:.87rem;color:var(--ink-3);margin-bottom:1.25rem">
           We read your CV and generates a new, optimised version tailored specifically for
           <strong><%= @role.title %></strong> highlighting your transferable skills and bootcamp projects.
@@ -241,7 +241,7 @@
               <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
               <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
             </svg>
-            Generate &amp; Download CV
+             Download CV
           </a>
 
           <span style="font-size:.8rem;color:var(--ink-3)">
@@ -260,7 +260,7 @@
         Start a mock interview, tailored for <%= @role.title %> roles.
       </p>
       <%# TODO: substituir "#" por new_role_interview_path(@role) %>
-      <%= link_to "Start interview →", "#", class: "btn-wu btn-wu-primary" %>
+      <%= link_to "Start interview →", new_role_interview_path(@role), class: "btn-wu btn-wu-primary" %>
     </div>
 
     <%# Back link bottom %>

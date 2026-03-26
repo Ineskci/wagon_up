@@ -187,9 +187,9 @@
         </div>
         <% top_role = @analysis.roles.order(:position).first %>
         <% if top_role %>
-          <%= link_to "Start interview prep →", new_role_interview_path(top_role), class: "btn-primary", style: "white-space:nowrap;padding:.85rem 2rem;font-size:1rem", data: { turbo_frame: "_top" } %>
+          <%= link_to "Start interview →", new_role_interview_path(top_role), class: "btn-primary", style: "white-space:nowrap;padding:.85rem 2rem;font-size:1rem", data: { turbo_frame: "_top" } %>
         <% else %>
-          <span class="btn-primary" style="white-space:nowrap;padding:.85rem 2rem;font-size:1rem;opacity:.5;cursor:not-allowed">Start interview prep →</span>
+          <span class="btn-primary" style="white-space:nowrap;padding:.85rem 2rem;font-size:1rem;opacity:.5;cursor:not-allowed">Start interview →</span>
         <% end %>
       </div>
     </div>
