@@ -13,13 +13,13 @@
     <div class="container position-relative" style="z-index:1">
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
-          <div style="font-size:.78rem;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Your AI Analysis</div>
+          <div style="font-size:.78rem;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Your Analysis</div>
           <h1 style="font-size:2.2rem;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:.4rem"><%= current_user.name %></h1>
-          <p style="color:rgba(255,255,255,.6);font-size:.95rem">Chloe is analysing your CV...</p>
+          <p style="color:rgba(255,255,255,.6);font-size:.95rem">We are analysing your CV...</p>
         </div>
         <div class="match-badge" style="opacity:.4">
           <span class="match-pct">--</span>
-          <span class="match-lbl">A calcular</span>
+          <span class="match-lbl">Analysing</span>
         </div>
       </div>
     </div>
@@ -28,10 +28,9 @@
   <div class="container py-7 text-center">
     <div style="max-width:480px;margin:0 auto;padding:4rem 0">
       <div style="font-size:3rem;margin-bottom:1.5rem">✦</div>
-      <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:.75rem">Chloe is working on it</h2>
+      <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:.75rem">We are working on it</h2>
       <p style="color:var(--ink-3);font-size:.9rem;line-height:1.7;margin-bottom:2rem">
-        We're analysing your CV with AI. This takes about 1–2 minutes.<br>
-        The page will refresh automatically when ready.
+        We're analysing your CV. This takes about 1–2 minutes.<br>
       </p>
       <div style="display:flex;justify-content:center;gap:.5rem">
         <span style="width:8px;height:8px;border-radius:50%;background:var(--brand);animation:pulse 1.2s ease-in-out infinite"></span>
@@ -65,7 +64,7 @@
     <div class="container position-relative" style="z-index:1">
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div style="max-width:55%">
-          <div style="font-size:.78rem;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Your AI Analysis</div>
+          <div style="font-size:.78rem;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Your Analysis</div>
           <h1 style="font-size:2.2rem;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:.4rem"><%= current_user.name %></h1>
           <p style="color:rgba(255,255,255,.6);font-size:.85rem;line-height:1.6"><%= @analysis.summary.present? ? @analysis.summary : "Full Stack Developer & Tech Problem Solver" %></p>
         </div>
@@ -184,7 +183,7 @@
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
           <div style="font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:.35rem">Ready to practice for your interviews?</div>
-          <div style="font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.6">Chloe will ask you questions tailored to <strong style="color:rgba(255,255,255,.85)">your profile and your target role</strong> — and score each answer in real time.</div>
+          <div style="font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.6">We will ask you questions tailored to <strong style="color:rgba(255,255,255,.85)">your profile and your target role</strong> and score each answer in real time.</div>
         </div>
         <% top_role = @analysis.roles.order(:position).first %>
         <% if top_role %>
