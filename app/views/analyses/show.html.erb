@@ -60,140 +60,322 @@
 
 <% else %>
 
-  <div class="profile-hero">
-    <div class="container position-relative" style="z-index:1">
-      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-        <div style="max-width:55%">
-          <div style="font-size:.78rem;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Your Analysis</div>
-          <h1 style="font-size:2.2rem;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:.4rem"><%= current_user.name %></h1>
-          <p style="color:rgba(255,255,255,.6);font-size:.85rem;line-height:1.6"><%= @analysis.summary.present? ? @analysis.summary : "Full Stack Developer & Tech Problem Solver" %></p>
-        </div>
-        <div class="match-badge">
-          <span class="match-pct">92%</span>
-          <span class="match-lbl">Overall Market Fit</span>
-          <span class="match-sub">↗ Top 15% of profiles</span>
-        </div>
+<%
+  # ── Data helpers ──────────────────────────────────────────────────────────
+  devicon_base = "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons"
+
+  # Map skill name → short key used in data-skill and highlights arrays
+  skill_key = ->(name) {
+    n = name.to_s.downcase.strip
+    if    n.include?("ruby on rails") || n == "rails"  then "rails"
+    elsif n.include?("ruby")                            then "ruby"
+    elsif n.include?("javascript") || n == "js"        then "js"
+    elsif n.include?("postgresql") || n.include?("sql") then "sql"
+    elsif n.include?("html")                            then "html"
+    elsif n.include?("css")                             then "css"
+    elsif n.include?("github")                          then "github"
+    elsif n.include?("git")                             then "git"
+    elsif n.include?("figma")                           then "figma"
+    elsif n.include?("heroku")                          then "heroku"
+    elsif n.include?("websocket") || n.include?("node") then "nodejs"
+    elsif n.include?("react")                           then "react"
+    elsif n.include?("operat")                          then "ops"
+    elsif n.include?("leadership") || n.include?("manag") then "leadership"
+    elsif n.include?("problem")                         then "problem"
+    elsif n.include?("critical")                        then "critical"
+    elsif n.include?("adapt")                           then "adapt"
+    elsif n.include?("empath")                          then "empathy"
+    elsif n.include?("curiosit")                        then "curiosity"
+    elsif n.include?("kpi")                             then "kpis"
+    elsif n.include?("communic")                        then "comm"
+    elsif n.include?("teamwork") || n.include?("collab") then "teamwork"
+    else  n.gsub(/[^a-z0-9]/, "_")
+    end
+  }
+
+  # devicon slug per key
+  devicons = {
+    "rails"  => "rails/rails-plain",
+    "ruby"   => "ruby/ruby-original",
+    "js"     => "javascript/javascript-original",
+    "sql"    => "postgresql/postgresql-original",
+    "html"   => "html5/html5-original",
+    "css"    => "css3/css3-original",
+    "git"    => "git/git-original",
+    "github" => "github/github-original",
+    "figma"  => "figma/figma-original",
+    "heroku" => "heroku/heroku-original",
+    "nodejs" => "nodejs/nodejs-plain",
+    "react"  => "react/react-original",
+  }
+
+  # Soft skill emoji + display name
+  soft_meta = {
+    "ops"       => { emoji: "⚙️",  label: "Operations"       },
+    "leadership"=> { emoji: "🏆",  label: "Leadership"        },
+    "problem"   => { emoji: "🧩",  label: "Problem Solving"   },
+    "critical"  => { emoji: "🔍",  label: "Critical Thinking" },
+    "adapt"     => { emoji: "🌱",  label: "Adaptability"      },
+    "empathy"   => { emoji: "🤝",  label: "Empathy"           },
+    "curiosity" => { emoji: "💡",  label: "Curiosity"         },
+    "kpis"      => { emoji: "📊",  label: "KPIs"              },
+    "comm"      => { emoji: "💬",  label: "Communication"     },
+    "teamwork"  => { emoji: "🤝",  label: "Teamwork"          },
+  }
+
+  hard_skills = @analysis.hard_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
+  hard_skills = ["Ruby on Rails", "Ruby", "JavaScript", "PostgreSQL", "HTML5", "CSS3", "Git", "GitHub", "Figma", "Heroku"] if hard_skills.blank?
+
+  soft_skills = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
+  soft_skills = ["Operations", "Leadership", "Problem Solving", "Critical Thinking", "Adaptability", "Empathy", "Curiosity", "KPIs"] if soft_skills.blank?
+
+  roles       = @roles.presence || @analysis.roles.order(:position).limit(3).to_a
+  top_role    = roles.first
+
+  # Hero score: first role's match_score, fallback to 87
+  hero_score  = top_role&.market_fit&.dig("match_score") || 87
+
+  # Chloe message (stored in summary)
+  chloe_msg   = @analysis.summary.presence || "Your profile is ready — here's how Chloe mapped your skills."
+%>
+
+<%# ── HERO ── %>
+<div class="profile-hero">
+  <div class="container hero-inner">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-4">
+      <div>
+        <div class="hero-eyebrow">Your AI Analysis</div>
+        <h1 class="hero-name"><%= current_user.name %></h1>
+        <p class="hero-tagline"><%= @analysis.cv_text.present? ? chloe_msg.split(".").first(2).join(".") + "." : "Your full-stack profile is ready." %></p>
+      </div>
+      <div class="hero-score">
+        <div class="hero-score-val" id="scoreVal" data-target="<%= hero_score %>">0%</div>
+        <div class="hero-score-label">Overall Market Fit</div>
+        <div class="hero-score-sub">↗ Top 15% of profiles</div>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="container py-7">
+<%# ── CHLOE BANNER ── %>
+<div class="chloe-banner">
+  <div class="chloe-av-img">
+    <%= image_tag "chloe_avatar.png", alt: "Chloe" %>
+  </div>
+  <div>
+    <div class="chloe-label">Chloe's take on your profile</div>
+    <p class="chloe-text"><%= raw(chloe_msg) %></p>
+  </div>
+</div>
 
-<div class="row g-4">
-      <div class="col-12 col-lg-5 sr">
-        <%
-          hard_skill_icons = {
-            "JavaScript"    => "devicon-javascript-plain colored",
-            "SQL"           => "devicon-postgresql-plain colored",
-            "Figma"         => "devicon-figma-plain colored",
-            "Git/GitHub"    => "devicon-github-original colored",
-            "Ruby on Rails" => "devicon-rails-plain colored",
-            "HTML/CSS"      => "devicon-html5-plain colored",
-            "Heroku"        => "devicon-heroku-original colored",
-            "WebSocket"     => "devicon-nodejs-plain colored",
-          }
-          soft_skill_icons = {
-            "Problem Solving"  => "🧩",
-            "Communication"    => "💬",
-            "Adaptability"     => "🌱",
-            "Teamwork"         => "🤝",
-            "Time Management"  => "⏱️",
-            "Critical Thinking"=> "🔍",
-            "Resilience"       => "💪",
-            "Empathy"          => "💛",
-            "Ownership"        => "🎯",
-            "Curiosity"        => "💡",
-          }
-          hard_skills = @analysis.hard_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
-          hard_skills = ["JavaScript", "Ruby on Rails", "HTML/CSS", "SQL", "Git/GitHub", "Figma", "Heroku"] if hard_skills.blank?
-          soft_skills = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
-          soft_skills = ["Problem Solving", "Communication", "Adaptability", "Teamwork", "Ownership"] if soft_skills.blank?
-        %>
+<%# ── PAGE BODY ── %>
+<div class="page-body">
+  <div class="container">
 
-        <div class="skill-icon-card mb-3">
-          <div class="skill-section-label" style="color:var(--brand);border-color:var(--brand-dim)">Hard Skills</div>
-          <div class="skill-icon-grid">
+    <div style="text-align:center;font-size:.78rem;color:var(--ink-3);margin-bottom:1.5rem;padding:.6rem;background:#fff;border:1px dashed var(--border);border-radius:10px;" class="sr">
+      💡 <strong>Tip:</strong> Hover a career suggestion to see exactly which of your skills match — and why.
+    </div>
+
+    <div class="row g-4">
+
+      <%# ── LEFT COLUMN — Skills ── %>
+      <div class="col-12 col-lg-5">
+
+        <%# HARD SKILLS %>
+        <div class="card-wu-lg sr mb-4">
+          <div class="section-label">Hard Skills</div>
+          <div class="skill-grid" id="hardGrid">
             <% hard_skills.each do |skill| %>
-              <div class="skill-icon-item">
-                <div class="skill-icon-box">
-                  <% if (cls = hard_skill_icons[skill]) %>
-                    <i class="<%= cls %>"></i>
+              <% key  = skill_key.call(skill) %>
+              <% icon = devicons[key] %>
+              <div class="skill-cell" data-skill="<%= key %>">
+                <div class="logo-wrap">
+                  <% if icon %>
+                    <img src="<%= devicon_base %>/<%= icon %>.svg"
+                         alt="<%= skill %>"
+                         <% if key == "github" %>style="filter:invert(1);background:#24292e;border-radius:50%;"<% end %>
+                         onerror="this.style.display='none'"/>
                   <% else %>
-                    <i class="fa-solid fa-code" style="color:var(--brand)"></i>
+                    <i class="fa-solid fa-code" style="color:var(--brand);font-size:1.4rem"></i>
                   <% end %>
                 </div>
-                <span class="skill-icon-name"><%= skill %></span>
+                <span class="skill-name"><%= skill %></span>
               </div>
             <% end %>
           </div>
         </div>
 
-        <div class="skill-icon-card">
-          <div class="skill-section-label" style="color:#16a34a;border-color:#dcfce7">Soft Skills</div>
-          <div class="skill-icon-grid">
+        <%# SOFT SKILLS %>
+        <div class="card-wu-lg sr d1 mb-4">
+          <div class="section-label sl-green">Soft Skills</div>
+          <div class="skill-grid" id="softGrid">
             <% soft_skills.each do |skill| %>
-              <div class="skill-icon-item">
-                <div class="skill-icon-box">
-                  <span style="font-size:1.6rem"><%= soft_skill_icons[skill] || "✨" %></span>
-                </div>
-                <span class="skill-icon-name"><%= skill %></span>
+              <% key  = skill_key.call(skill) %>
+              <% meta = soft_meta[key] || { emoji: "✨", label: skill } %>
+              <div class="skill-cell skill-cell-soft" data-skill="<%= key %>">
+                <div class="skill-icon-emoji"><%= meta[:emoji] %></div>
+                <span class="skill-name"><%= skill %></span>
               </div>
             <% end %>
           </div>
         </div>
+
+        <%# ATS KEYWORDS %>
+        <div class="card-wu-lg sr d2">
+          <div class="section-label">ATS Keywords</div>
+          <div style="font-size:.8rem;color:var(--ink-3);margin-bottom:1rem;line-height:1.55;background:var(--bg);border-radius:8px;padding:.75rem 1rem;border-left:3px solid var(--brand-dim);">
+            These words help your CV pass automated filters before a human reads it.
+          </div>
+          <div class="keyword-tags" id="kwGrid">
+            <% hard_skills.first(6).each do |kw| %>
+              <span class="kw-tag kw-tech" data-skill="<%= skill_key.call(kw) %>"><%= kw %></span>
+            <% end %>
+            <% soft_skills.first(5).each do |kw| %>
+              <span class="kw-tag kw-soft" data-skill="<%= skill_key.call(kw) %>"><%= kw %></span>
+            <% end %>
+          </div>
+        </div>
+
       </div>
 
-      <div class="col-12 col-lg-7 sr d1">
-        <div style="font-size:1rem;font-weight:700;margin-bottom:1rem">Career Suggestions</div>
-        <div class="d-flex flex-column gap-3">
-          <% if @analysis.roles.any? %>
-            <% @analysis.roles.order(:position).limit(3).each_with_index do |role, i| %>
-              <% pills = ["", "style='background:#dbeafe;color:#1e40af'", "style='background:#fef9c3;color:#854d0e'"] %>
-              <% pcts = ["87%", "82%", "79%"] %>
-              <div class="career-card" onclick="window.location='<%= role_path(role) %>'">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                    <div style="font-size:1rem;font-weight:700;color:var(--ink)"><%= role.title %></div>
-                    <div style="font-size:.82rem;color:var(--ink-3);margin-top:2px"><%= role.justification&.truncate(80) %></div>
+      <%# ── RIGHT COLUMN — Career Suggestions ── %>
+      <div class="col-12 col-lg-7">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;" class="sr">
+          <div class="section-label" style="margin-bottom:0">Career Suggestions</div>
+          <span style="font-size:.75rem;color:var(--ink-3);">Based on your full profile</span>
+        </div>
+
+        <div class="why-box sr d1">
+          <span style="font-size:1.1rem;flex-shrink:0;">💡</span>
+          <div class="why-text">
+            Each role was chosen because it values the intersection of
+            <strong>operational leadership and technical execution</strong> —
+            exactly where your profile is strongest. Hover any card to see the skill-by-skill reasoning.
+          </div>
+        </div>
+
+        <% pill_classes = %w[match-green match-blue match-yellow] %>
+        <% delay_classes = ["sr d1", "sr d2", "sr d3"] %>
+
+        <% roles.each_with_index do |role, i| %>
+          <% mf          = role.market_fit || {} %>
+          <% match_score = mf["match_score"] || [87, 82, 79][i] %>
+          <% description = mf["description"].presence || role.justification.to_s.truncate(140) %>
+          <% reasons     = mf["match_reasons"] || [] %>
+          <% highlights  = (mf["highlights"] || []).to_json %>
+
+          <div class="career-card <%= delay_classes[i] %>"
+               data-highlights="<%= highlights %>"
+               onmouseenter="highlightSkills(this)"
+               onmouseleave="clearHighlights()"
+               onclick="window.location='<%= role_path(role) %>'">
+
+            <div class="career-card-header">
+              <div class="career-card-top">
+                <div class="career-card-title"><%= role.title %></div>
+                <span class="match-pill <%= pill_classes[i] %>"><%= match_score %>% match</span>
+              </div>
+              <p class="career-card-desc"><%= description %></p>
+            </div>
+
+            <% if reasons.any? %>
+              <div class="match-reasons">
+                <% reasons.first(3).each do |r| %>
+                  <div class="match-reason">
+                    <div class="mr-icon <%= r["green"] ? "green" : "" %>">✦</div>
+                    <div class="mr-text"><%= raw(r["text"]) %></div>
                   </div>
-                  <span class="match-pill" <%= pills[i].html_safe %>><%= pcts[i] %> match</span>
-                </div>
-                <%= link_to "See details →", role_path(role), class: "btn-outline-brand btn-sm mt-2", style: "font-size:.78rem", data: { turbo_frame: "_top" } %>
+                <% end %>
               </div>
             <% end %>
-          <% else %>
-            <% [["Junior Web Developer","87%",""],["Product Engineer","82%","style='background:#dbeafe;color:#1e40af'"],["Technical Project Manager","79%","style='background:#fef9c3;color:#854d0e'"]].each do |title, pct, pill| %>
-              <div class="career-card" style="opacity:.7">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div><div style="font-size:1rem;font-weight:700;color:var(--ink)"><%= title %></div></div>
-                  <span class="match-pill" <%= pill.html_safe %>><%= pct %> match</span>
+
+            <div class="career-card-footer">
+              <%= link_to "See full details →", role_path(role), class: "btn-details", data: { turbo_frame: "_top" } %>
+              <div class="match-bar-wrap">
+                <div class="match-bar-track">
+                  <div class="match-bar-fill" style="width:<%= match_score %>%"></div>
                 </div>
-                <button class="btn-outline-brand btn-sm mt-2" style="font-size:.78rem;opacity:.5" disabled>See details →</button>
+                <span class="match-bar-pct"><%= match_score %>%</span>
               </div>
-            <% end %>
-          <% end %>
-        </div>
-      </div>
-    </div>
+            </div>
 
-  </div>
-
-  <div class="interview-cta-banner">
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-        <div>
-          <div style="font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:.35rem">Ready to practice for your interviews?</div>
-          <div style="font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.6">We will ask you questions tailored to <strong style="color:rgba(255,255,255,.85)">your profile and your target role</strong> and score each answer in real time.</div>
-        </div>
-        <% top_role = @analysis.roles.order(:position).first %>
-        <% if top_role %>
-          <%= link_to "Start interview →", new_role_interview_path(top_role), class: "btn-primary", style: "white-space:nowrap;padding:.85rem 2rem;font-size:1rem", data: { turbo_frame: "_top" } %>
-        <% else %>
-          <span class="btn-primary" style="white-space:nowrap;padding:.85rem 2rem;font-size:1rem;opacity:.5;cursor:not-allowed">Start interview →</span>
+          </div>
         <% end %>
+
+        <% if roles.empty? %>
+          <div style="padding:2rem;text-align:center;color:var(--ink-3);font-size:.9rem">
+            Career suggestions are being generated. Please refresh in a moment.
+          </div>
+        <% end %>
+
       </div>
     </div>
+
+    <%# ── CTA BOTTOM ── %>
+    <div class="interview-cta sr">
+      <div style="position:relative;z-index:1;">
+        <div class="cta-title">Ready to practise for your interviews?</div>
+        <p class="cta-sub">Chloe will ask you questions tailored to <strong>your profile and your target role</strong> — and score each answer in real time.</p>
+      </div>
+      <% if top_role %>
+        <%= link_to new_role_interview_path(top_role), class: "btn-interview", data: { turbo_frame: "_top" } do %>
+          Start interview prep →
+        <% end %>
+      <% else %>
+        <span class="btn-interview" style="opacity:.5;cursor:not-allowed">Start interview prep →</span>
+      <% end %>
+    </div>
+
   </div>
+</div>
+
+<script>
+/* ── SCORE COUNTER ── */
+(function() {
+  const el = document.getElementById('scoreVal');
+  if (!el) return;
+  const target = parseInt(el.dataset.target, 10) || 87;
+  let cur = 0;
+  const tick = () => {
+    cur = Math.min(cur + 2, target);
+    el.textContent = cur + '%';
+    if (cur < target) requestAnimationFrame(tick);
+  };
+  setTimeout(() => requestAnimationFrame(tick), 300);
+})();
+
+/* ── SCROLL REVEAL ── */
+const srObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('up'); srObs.unobserve(e.target); } });
+}, { threshold: .08 });
+document.querySelectorAll('.sr').forEach(el => srObs.observe(el));
+
+/* ── SKILL HIGHLIGHTING ── */
+function highlightSkills(card) {
+  const highlights = JSON.parse(card.dataset.highlights || '[]');
+  document.querySelectorAll('#hardGrid .skill-cell').forEach(cell => {
+    const match = highlights.includes(cell.dataset.skill);
+    cell.classList.toggle('highlighted', match);
+    cell.classList.toggle('dimmed', !match);
+  });
+  document.querySelectorAll('#softGrid .skill-cell').forEach(cell => {
+    const match = highlights.includes(cell.dataset.skill);
+    cell.classList.toggle('highlighted', match);
+    cell.classList.toggle('dimmed', !match);
+  });
+  document.querySelectorAll('#kwGrid .kw-tag').forEach(tag => {
+    const match = tag.dataset.skill && highlights.includes(tag.dataset.skill);
+    tag.classList.toggle('highlighted', match);
+    tag.style.opacity = match ? '1' : '0.3';
+  });
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.skill-cell').forEach(c => c.classList.remove('highlighted', 'dimmed'));
+  document.querySelectorAll('.kw-tag').forEach(t => { t.classList.remove('highlighted'); t.style.opacity = ''; });
+}
+</script>
 
 <% end %>
 

@@ -17,6 +17,7 @@ class AnalysesController < ApplicationController
   # GET /analyses/:id
   def show
     @analysis = current_user.analyses.find(params[:id])
+    @roles    = @analysis.roles.order(:position).limit(3)
   end
 
   # POST /analyses
