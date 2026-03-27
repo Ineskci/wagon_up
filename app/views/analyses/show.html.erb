@@ -122,6 +122,7 @@
     "nginx"         => "nginx/nginx-original",
     "vercel"        => "vercel/vercel-original",
     "netlify"       => "netlify/netlify-original",
+    "openai-api"    => "openai/openai-original",
   }
 
   # Emoji per slug for soft/domain skills
@@ -152,28 +153,18 @@
     "kanban"                 => { emoji: "📋" },
   }
 
-  # Skills selected in the form
-  form_hard = @analysis.hard_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
-  form_hard = ["Ruby on Rails", "Ruby", "JavaScript", "PostgreSQL", "HTML5", "CSS3", "Git", "GitHub", "Figma", "Heroku"] if form_hard.blank?
+  # Hard skills — form selection only, filtered to skills that have a devicon
+  form_hard = @analysis.hard_skills_selected.to_s.split(/,\s*/).map(&:strip).reject(&:blank?)
+  form_hard = ["Ruby on Rails", "Ruby", "JavaScript", "PostgreSQL", "HTML/CSS", "Git", "GitHub", "Figma", "Heroku"] if form_hard.blank?
 
-  form_soft = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
-  form_soft = ["Operations", "Leadership", "Problem Solving", "Critical Thinking", "Adaptability", "Empathy", "Curiosity", "KPIs"] if form_soft.blank?
+  hard_skills   = form_hard.select { |s| devicons.key?(skill_key.call(s)) }
+  leftover_form = form_hard.reject { |s| devicons.key?(skill_key.call(s)) }
 
-  # Skills extracted from CV by Claude (analise_lacunas.tenho, saved in analysis.skills)
-  # Items look like: "Ruby on Rails — fullstack (Le Wagon, 2 projects)", "React + JavaScript", "SQL & PostgreSQL"
-  tenho_raw = (JSON.parse(@analysis.skills.to_s) rescue [])
-  cv_skills = tenho_raw.flat_map { |s|
-    skill_part = s.to_s.split(/\s*[—–]\s*/).first.to_s.strip
-    skill_part.split(/\s*[+&]\s*/).map(&:strip)
-  }.reject(&:blank?)
+  # Soft skills — form selection only + any hard-selected skill that had no devicon
+  form_soft   = @analysis.soft_skills_selected.to_s.split(/,\s*/).map(&:strip).reject(&:blank?)
+  form_soft   = ["Problem Solving", "Communication", "Adaptability", "Teamwork"] if form_soft.blank?
 
-  # Merge all candidate hard skills, then split by whether they have a devicon
-  all_hard = (form_hard + cv_skills).uniq { |s| skill_key.call(s) }
-  hard_skills  = all_hard.select { |s| devicons.key?(skill_key.call(s)) }
-  leftover_cv  = all_hard.reject { |s| devicons.key?(skill_key.call(s)) }
-
-  # Soft skills = form soft + leftover CV skills (domain/methodological), deduplicated
-  soft_skills = (form_soft + leftover_cv).uniq { |s| skill_key.call(s) }
+  soft_skills = (form_soft + leftover_form).uniq { |s| skill_key.call(s) }
 
   # ── Real API data from raw_json ──────────────────────────────────────────
   raw         = @analysis.raw_json || {}
