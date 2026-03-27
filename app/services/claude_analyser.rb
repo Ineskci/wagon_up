@@ -74,6 +74,8 @@ class ClaudeAnalyser
     - Percentages: Role 1 = 82–92%, Role 2 = 73–83%, Role 3 = 64–76%. Never multiples of 5.
     - `rotulo_compatibilidade`: use EXACTLY — 82–92% = "Excellent Fit", 73–83% = "Good Fit", 64–76% = "Solid Fit".
     - Career axes: Axis A (prior experience) < 3 yrs = Entry-level, 3–5 = Mid-level, > 5 = Senior. Axis B (tech maturity) bootcamp = Junior, bootcamp + tech exp = Mid.
+    - `estudante.ats_tech`: list of 4–6 technical keywords extracted verbatim from the CV — use the exact terminology the candidate used, do not rephrase or translate. Include only terms that would appear in a job description and help pass ATS filters. Examples: "Ruby on Rails", "REST API", "PostgreSQL", "CI/CD", "OpenAI API", "Agile", "Git".
+    - `estudante.ats_soft`: list of 3–5 behavioural keywords extracted verbatim from the CV. Use the exact terminology the candidate used, do not rephrase or translate. Examples: "Cross-functional Leadership", "Stakeholder Management", "Data-driven Decisions", "Process Optimization", "Team Management".
     - `highlights`: array of 4–8 skill slugs from the student's confirmed skills that are most relevant to THIS specific role.
       Slug rule: lowercase, spaces → hyphens, "/" → "-", " on " → "-". Examples:
         "Ruby on Rails" → "ruby-on-rails" | "JavaScript" → "javascript" | "HTML/CSS" → "html-css"
@@ -82,12 +84,17 @@ class ClaudeAnalyser
         "Empathy" → "empathy" | "Leadership" → "leadership" | "KPIs" → "kpis"
       Rules: Only include skills the student actually confirmed. Include both hard AND soft skills.
       Each of the 3 roles MUST have a DIFFERENT highlights array (4–8 slugs each).
+      Role-specific requirements (if the student confirmed these skills):
+        - Any Full Stack Developer role: ALWAYS include "ruby" and "ruby-on-rails" in highlights.
+        - Any Backend Developer role: ALWAYS include "ruby", "ruby-on-rails", "sql", "postgresql".
+        - Any Product Manager role: ALWAYS include "figma" and "sql" if confirmed.
+        - Any DevOps or Operations role: ALWAYS include "git", "git-github", "heroku" if confirmed.
 
     ## REFERENCE EXAMPLE
 
     <exemplo>
     {
-      "estudante": { "nome": "Madalena Da Cruz", "iniciais": "MD", "headline": "Full Stack Developer & Product Strategist", "resumo_chloe": "Madalena combines 5 years of data analysis at L'Oréal with a complete Rails stack — a rare profile that unites business instinct and technical capability." },
+      "estudante": { "nome": "Madalena Da Cruz", "iniciais": "MD", "headline": "Full Stack Developer & Product Strategist", "resumo_chloe": "Madalena combines 5 years of data analysis at L'Oréal with a complete Rails stack — a rare profile that unites business instinct and technical capability.", "ats_tech": ["Ruby on Rails", "REST API", "PostgreSQL", "Git", "OpenAI API"], "ats_soft": ["Cross-functional Leadership", "Data-driven Decisions", "Stakeholder Management"] },
       "cargos_sugeridos": [{
         "id": "junior-web-developer", "titulo": "Junior Web Developer", "axis_a": "Senior", "axis_b": "Junior",
         "percentual_compatibilidade": 87, "rotulo_compatibilidade": "Excellent Fit",

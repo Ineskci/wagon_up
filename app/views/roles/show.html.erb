@@ -58,7 +58,7 @@
            "Turkey" => "🇹🇷", "Indonesia" => "🇮🇩", "India" => "🇮🇳",
            "China" => "🇨🇳", "Hong Kong" => "🇭🇰"
          } %>
-      <% markets = @role.market_fit.map { |country, data|
+      <% markets = @role.market_fit.select { |_, data| data.is_a?(Hash) }.map { |country, data|
            [country, country_flags[country] || "🌍", data]
          }.select { |_, _, data| data.present? } %>
 
