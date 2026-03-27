@@ -385,28 +385,65 @@
         <% delay_classes = ["sr d1", "sr d2", "sr d3"] %>
 
         <%
-          # PT+EN keyword aliases per skill key — used to match Portuguese API responses
-          skill_aliases = {
-            "rails"      => %w[rails],
-            "ruby"       => %w[ruby],
-            "js"         => %w[javascript typescript],
-            "sql"        => %w[postgresql sql dados data banco database],
-            "html"       => %w[html],
-            "css"        => %w[css],
-            "git"        => %w[git],
-            "github"     => %w[github],
-            "figma"      => %w[figma design prototip],
-            "heroku"     => %w[heroku deploy],
-            "ops"        => %w[opera operac logist process processos produto product],
-            "leadership" => %w[lideran gestao gestão manag coordena equipe team squad],
-            "problem"    => %w[problem resoluc soluç solut],
-            "critical"   => %w[critico critical anali],
-            "adapt"      => %w[adapt],
-            "empathy"    => %w[empatia empathy stakeholder],
-            "curiosity"  => %w[curiosit aprendiz learning],
-            "kpis"       => %w[kpi metrica metric dados data],
-            "comm"       => %w[comunic communic],
-            "teamwork"   => %w[colabo colabor collab],
+          # Hard skill aliases — lean list, mostly exact tech names
+          hard_aliases = {
+            "rails"     => %w[rails],
+            "ruby"      => %w[ruby],
+            "js"        => %w[javascript typescript],
+            "ts"        => %w[typescript],
+            "sql"       => %w[postgresql sql dados data banco database],
+            "html"      => %w[html],
+            "css"       => %w[css],
+            "git"       => %w[git],
+            "github"    => %w[github],
+            "figma"     => %w[figma design prototip wireframe],
+            "heroku"    => %w[heroku deploy],
+            "nodejs"    => %w[node nodejs],
+            "react"     => %w[react],
+            "nextjs"    => %w[next nextjs],
+            "python"    => %w[python],
+            "docker"    => %w[docker container],
+            "aws"       => %w[aws amazon cloud nuvem],
+          }
+
+          # Soft skill aliases — covers both Portuguese and English API responses
+          # Keys must match what skill_key.call() returns, not the display name
+          soft_aliases = {
+            "leadership"  => %w[leader lider lideran lidera gestão gere gerencia
+                                coordena manage direct supervis chefi responsav
+                                responsib head],
+            "problem"     => %w[problem resolv solut debug troubleshoot analys
+                                diagnos solucionar resolver identific challenge
+                                desafio obstacle],
+            "comm"        => %w[communic comunic present report stakeholder
+                                redacao escrita verbal negoci relacion interfac],
+            "adapt"       => %w[adapt flex agil pivot change dynamic versatil
+                                mudança ambiente context different various varios],
+            "critical"    => %w[critical analytical analyt strateg decis priorit
+                                analis avalia julgamento estrutura logical logico],
+            "empathy"     => %w[empat user client customer human people team
+                                usuario cliente pessoa relacion centrado centered],
+            "curiosity"   => %w[curious learn research explore innovat growth
+                                aprender aprendizado descobr invest proactiv
+                                iniciativa],
+            "ownership"   => %w[owner responsib accountab autonomy proactiv
+                                initiative responsav dono proprio independ autonom],
+            "ops"         => %w[operat process workflow coordinat logistic execut
+                                operacao operacional processo procedimento fluxo
+                                pipeline supply infraestrut],
+            "kpis"        => %w[kpi metric data measur dashboard report analyt
+                                indicador resultado performance objetivo meta
+                                goal okr acompanhar monitorar track],
+            "teamwork"    => %w[team collabor colleg squad pair equipe time junto
+                                conjunto cross interfunc multidiscipl parceria],
+            "time"        => %w[time deadline priorit schedul organiz plan prazo
+                                tempo organiza prioriza agenda eficien],
+            "resilience"  => %w[resili pressur stress challeng obstacle persist
+                                pressao dificil adversidade superar crise critica
+                                olimp olympic],
+            "stakeholder" => %w[stakeholder client partner sponsor c-level execut
+                                director board fornecedor parceiro patrocinador
+                                diretoria lideranca],
           }
         %>
 
@@ -422,28 +459,46 @@
             if mf_highlights.present?
               highlights = mf_highlights.to_json
             else
-              # Priority 2: text search across all role fields (PT + EN aliases)
-              cargo_text = [
+              # Build searchable text blob from all role-specific fields
+              role_text = [
                 cargo["titulo"], cargo["descricao"], cargo["justificativa"],
                 cargo["mensagem_chloe"],
                 breakdown.map { |b| "#{b["passado"]} #{b["futuro"]}" }
               ].flatten.compact.join(" ").downcase
 
-              skill_relevant = ->(name) {
-                key = skill_key.call(name)
-                aliases = skill_aliases[key] || []
-                # Check alias keywords against cargo_text
-                aliases.any? { |kw| cargo_text.include?(kw) } ||
-                # Fallback: any word ≥4 chars from skill name
-                name.to_s.downcase.split(/[\s\/\-]+/).select { |w| w.length >= 4 }.any? { |w| cargo_text.include?(w) }
+              # Hard skill matching
+              matched_hard = hard_skills.select { |s|
+                key = skill_key.call(s)
+                aliases = hard_aliases[key] || []
+                aliases.any? { |kw| role_text.include?(kw) } ||
+                s.to_s.downcase.split(/[\s\/\-]+/).select { |w| w.length >= 4 }.any? { |w| role_text.include?(w) }
               }
+              matched_hard_keys = matched_hard.map { |s| skill_key.call(s) }
 
-              highlights = (hard_skills + soft_skills)
-                .select { |s| skill_relevant.call(s) }
-                .map    { |s| skill_key.call(s) }
-                .compact.uniq.to_json
+              # Soft skill matching — uses expanded PT+EN alias table
+              matched_soft = soft_skills.select { |s|
+                key = skill_key.call(s)
+                aliases = soft_aliases[key] || [s.to_s.downcase.split(" ").first]
+                aliases.any? { |a| role_text.include?(a) }
+              }
+              soft_highlights = matched_soft.map { |s| skill_key.call(s) }
+
+              # Minimum guarantee: at least 2 soft highlights per card
+              if soft_highlights.length < 2
+                soft_highlights = soft_skills.first(3).map { |s| skill_key.call(s) }
+              end
+
+              highlights = (matched_hard_keys + soft_highlights).uniq.to_json
             end
           %>
+
+          <% if Rails.env.development? %>
+            <!-- DEBUG role <%= cargo["titulo"] %>:
+              role_text_sample: <%= role_text&.first(300) %>
+              matched_soft: <%= matched_soft&.map { |s| skill_key.call(s) } %>
+              all_soft_keys: <%= soft_skills.map { |s| skill_key.call(s) } %>
+            -->
+          <% end %>
 
           <div class="career-card <%= delay_classes[i] %>"
                data-highlights="<%= highlights %>"
