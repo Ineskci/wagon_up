@@ -225,6 +225,7 @@
     "netlify"       => "netlify/netlify-original",
     "openai-api"    => "openai/openai-original",
     "claude-code"   => nil,
+    "canva"         => "canva/canva-original",
   }
 
   # Emoji per slug for soft/domain skills
@@ -289,7 +290,7 @@
       <div>
         <div class="hero-eyebrow">Your AI Analysis</div>
         <h1 class="hero-name"><%= current_user.name %></h1>
-        <p class="hero-tagline"><%= @analysis.cv_text.present? ? chloe_msg.split(".").first(2).join(".") + "." : "Your full-stack profile is ready." %></p>
+        <p class="hero-tagline"><%= raw.dig("estudante", "headline").presence || "Full Stack Developer" %></p>
       </div>
       <div class="hero-score">
         <div class="hero-score-val" id="scoreVal" data-target="<%= hero_score %>">0%</div>
