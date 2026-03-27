@@ -64,168 +64,92 @@
   # ── Data helpers ──────────────────────────────────────────────────────────
   devicon_base = "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons"
 
-  # Map skill name → short key used in data-skill and highlights arrays
+  # Slug normalisation — must match what Claude returns in highlights.
+  # Rule: lowercase, spaces→hyphens, "/"→"-", " on "→"-"
   skill_key = ->(name) {
-    n = name.to_s.downcase.strip
-    if    n == "git/github" || n == "git / github"          then "git"
-    elsif n == "html/css"   || n == "html / css"            then "html"
-    elsif n.include?("ruby on rails") || n == "rails"       then "rails"
-    elsif n.include?("ruby")                                then "ruby"
-    elsif n.include?("typescript")                          then "ts"
-    elsif n.include?("javascript") || n == "js"             then "js"
-    elsif n.include?("next.js") || n.include?("nextjs")     then "nextjs"
-    elsif n.include?("react")                               then "react"
-    elsif n.include?("postgresql") || n.include?("sql")     then "sql"
-    elsif n.include?("python")                              then "python"
-    elsif n.include?("html")                                then "html"
-    elsif n.include?("css")                                 then "css"
-    elsif n.include?("github")                              then "github"
-    elsif n.include?("git")                                 then "git"
-    elsif n.include?("figma")                               then "figma"
-    elsif n.include?("heroku")                              then "heroku"
-    elsif n.include?("websocket")                           then "websocket"
-    elsif n.include?("node")                                then "nodejs"
-    elsif n.include?("docker")                              then "docker"
-    elsif n.include?("kubernetes") || n == "k8s"            then "kubernetes"
-    elsif n.include?("amazon") || n == "aws"                then "aws"
-    elsif n.include?("redis")                               then "redis"
-    elsif n.include?("graphql")                             then "graphql"
-    elsif n.include?("tailwind")                            then "tailwind"
-    elsif n.include?("bootstrap")                           then "bootstrap"
-    elsif n.include?("sass") || n.include?("scss")          then "sass"
-    elsif n.include?("vue")                                 then "vue"
-    elsif n.include?("angular")                             then "angular"
-    elsif n.include?("django")                              then "django"
-    elsif n.include?("flask")                               then "flask"
-    elsif n.include?("fastapi")                             then "fastapi"
-    elsif n.include?("spring")                              then "spring"
-    elsif n.include?("mongodb") || n.include?("mongo")      then "mongodb"
-    elsif n.include?("mysql")                               then "mysql"
-    elsif n.include?("firebase")                            then "firebase"
-    elsif n.include?("supabase")                            then "supabase"
-    elsif n.include?("prisma")                              then "prisma"
-    elsif n.include?("stripe")                              then "stripe"
-    elsif n.include?("openai")                              then "openai"
-    elsif n.include?("rest api") || n == "rest"             then "rest"
-    elsif n.include?("postman")                             then "postman"
-    elsif n.include?("linux")                               then "linux"
-    elsif n.include?("bash")                                then "bash"
-    elsif n.include?("ci/cd") || n.include?("cicd")        then "cicd"
-    elsif n.include?("github actions")                      then "ghactions"
-    elsif n.include?("vercel")                              then "vercel"
-    elsif n.include?("netlify")                             then "netlify"
-    elsif n.include?("cloudflare")                          then "cloudflare"
-    elsif n.include?("nginx")                               then "nginx"
-    elsif n.include?("swift")                               then "swift"
-    elsif n.include?("kotlin")                              then "kotlin"
-    elsif n.include?("flutter")                             then "flutter"
-    elsif n.include?("react native")                        then "react"
-    elsif n.include?("solidity")                            then "solidity"
-    elsif n.include?("web3")                                then "web3"
-    elsif n.include?("webpack")                             then "webpack"
-    elsif n.include?("vite")                                then "vite"
-    elsif n.include?("operat")                              then "ops"
-    elsif n.include?("leadership") || n.include?("manag")   then "leadership"
-    elsif n.include?("problem")                             then "problem"
-    elsif n.include?("critical")                            then "critical"
-    elsif n.include?("adapt")                               then "adapt"
-    elsif n.include?("empath")                              then "empathy"
-    elsif n.include?("curiosit")                            then "curiosity"
-    elsif n.include?("kpi")                                 then "kpis"
-    elsif n.include?("communic")                            then "comm"
-    elsif n.include?("teamwork") || n.include?("collab")    then "teamwork"
-    elsif n.include?("ownership")                           then "ownership"
-    elsif n.include?("resilien")                            then "resilience"
-    elsif n.include?("time manag")                          then "time"
-    elsif n.include?("creativ")                             then "creativity"
-    elsif n.include?("roadmap")                             then "roadmap"
-    elsif n.include?("priorit")                             then "priorit"
-    elsif n.include?("stakeholder")                         then "stakeholder"
-    elsif n.include?("wireframe")                           then "wireframe"
-    elsif n.include?("user journey")                        then "user_journey"
-    elsif n.include?("smart")                               then "smart"
-    elsif n.include?("feature")                             then "feature"
-    elsif n.include?("agile")                               then "agile"
-    elsif n.include?("scrum")                               then "scrum"
-    elsif n.include?("kanban")                              then "kanban"
-    elsif n.include?("analyt") || n.include?("analís")      then "analyt"
-    else  n.gsub(/[^a-z0-9]/, "_")
-    end
+    name.to_s.downcase.strip
+        .gsub(" on ", "-")
+        .gsub("/", "-")
+        .gsub(" ", "-")
+        .gsub("'", "")
+        .squeeze("-")
   }
 
-  # devicon slug per key — this IS the hard-skills whitelist.
-  # Any skill whose key is not here will NOT appear in the hard skills grid.
+  # devicon path per slug — this IS the hard-skills whitelist.
+  # Any skill whose slug is not here goes to the soft/domain grid instead.
   devicons = {
-    "rails"      => "rails/rails-plain",
-    "ruby"       => "ruby/ruby-original",
-    "js"         => "javascript/javascript-original",
-    "ts"         => "typescript/typescript-original",
-    "sql"        => "postgresql/postgresql-original",
-    "html"       => "html5/html5-original",
-    "css"        => "css3/css3-original",
-    "git"        => "git/git-original",
-    "github"     => "github/github-original",
-    "figma"      => "figma/figma-original",
-    "heroku"     => "heroku/heroku-original",
-    "nodejs"     => "nodejs/nodejs-plain",
-    "react"      => "react/react-original",
-    "nextjs"     => "nextjs/nextjs-original",
-    "python"     => "python/python-original",
-    "websocket"  => "nodejs/nodejs-plain",
-    "docker"     => "docker/docker-original",
-    "kubernetes" => "kubernetes/kubernetes-plain",
-    "aws"        => "amazonwebservices/amazonwebservices-original",
-    "redis"      => "redis/redis-original",
-    "graphql"    => "graphql/graphql-plain",
-    "tailwind"   => "tailwindcss/tailwindcss-plain",
-    "bootstrap"  => "bootstrap/bootstrap-original",
-    "sass"       => "sass/sass-original",
-    "vue"        => "vuejs/vuejs-original",
-    "angular"    => "angularjs/angularjs-original",
-    "django"     => "django/django-plain",
-    "flask"      => "flask/flask-original",
-    "mongodb"    => "mongodb/mongodb-original",
-    "mysql"      => "mysql/mysql-original",
-    "firebase"   => "firebase/firebase-plain",
-    "swift"      => "swift/swift-original",
-    "kotlin"     => "kotlin/kotlin-original",
-    "flutter"    => "flutter/flutter-original",
-    "linux"      => "linux/linux-original",
-    "bash"       => "bash/bash-original",
-    "webpack"    => "webpack/webpack-original",
-    "vite"       => "vitejs/vitejs-original",
-    "nginx"      => "nginx/nginx-original",
-    "vercel"     => "vercel/vercel-original",
-    "netlify"    => "netlify/netlify-original",
+    "ruby-on-rails" => "rails/rails-plain",
+    "ruby"          => "ruby/ruby-original",
+    "javascript"    => "javascript/javascript-original",
+    "typescript"    => "typescript/typescript-original",
+    "sql"           => "postgresql/postgresql-original",
+    "postgresql"    => "postgresql/postgresql-original",
+    "html5"         => "html5/html5-original",
+    "html-css"      => "html5/html5-original",
+    "css3"          => "css3/css3-original",
+    "git"           => "git/git-original",
+    "git-github"    => "git/git-original",
+    "github"        => "github/github-original",
+    "figma"         => "figma/figma-original",
+    "heroku"        => "heroku/heroku-original",
+    "node.js"       => "nodejs/nodejs-plain",
+    "websocket"     => "nodejs/nodejs-plain",
+    "react"         => "react/react-original",
+    "next.js"       => "nextjs/nextjs-original",
+    "python"        => "python/python-original",
+    "docker"        => "docker/docker-original",
+    "kubernetes"    => "kubernetes/kubernetes-plain",
+    "aws"           => "amazonwebservices/amazonwebservices-original",
+    "redis"         => "redis/redis-original",
+    "graphql"       => "graphql/graphql-plain",
+    "tailwind"      => "tailwindcss/tailwindcss-plain",
+    "bootstrap"     => "bootstrap/bootstrap-original",
+    "sass"          => "sass/sass-original",
+    "vue.js"        => "vuejs/vuejs-original",
+    "angular"       => "angularjs/angularjs-original",
+    "django"        => "django/django-plain",
+    "flask"         => "flask/flask-original",
+    "mongodb"       => "mongodb/mongodb-original",
+    "mysql"         => "mysql/mysql-original",
+    "firebase"      => "firebase/firebase-plain",
+    "swift"         => "swift/swift-original",
+    "kotlin"        => "kotlin/kotlin-original",
+    "flutter"       => "flutter/flutter-original",
+    "linux"         => "linux/linux-original",
+    "bash"          => "bash/bash-original",
+    "webpack"       => "webpack/webpack-original",
+    "vite"          => "vitejs/vitejs-original",
+    "nginx"         => "nginx/nginx-original",
+    "vercel"        => "vercel/vercel-original",
+    "netlify"       => "netlify/netlify-original",
   }
 
-  # Soft skill emoji — covers both selected and domain/methodological skills from CV
+  # Emoji per slug for soft/domain skills
   soft_meta = {
-    "ops"           => { emoji: "⚙️"  },
-    "leadership"    => { emoji: "🏆"  },
-    "problem"       => { emoji: "🧩"  },
-    "critical"      => { emoji: "🔍"  },
-    "adapt"         => { emoji: "🌱"  },
-    "empathy"       => { emoji: "🤝"  },
-    "curiosity"     => { emoji: "💡"  },
-    "kpis"          => { emoji: "📊"  },
-    "comm"          => { emoji: "💬"  },
-    "teamwork"      => { emoji: "🤝"  },
-    "ownership"     => { emoji: "🎯"  },
-    "resilience"    => { emoji: "💪"  },
-    "time"          => { emoji: "⏱️"  },
-    "creativity"    => { emoji: "🎨"  },
-    "roadmap"       => { emoji: "🗺️"  },
-    "priorit"       => { emoji: "🔢"  },
-    "stakeholder"   => { emoji: "🤝"  },
-    "wireframe"     => { emoji: "📐"  },
-    "user_journey"  => { emoji: "🗺️"  },
-    "smart"         => { emoji: "🎯"  },
-    "feature"       => { emoji: "✨"  },
-    "agile"         => { emoji: "🔄"  },
-    "scrum"         => { emoji: "🔄"  },
-    "kanban"        => { emoji: "📋"  },
-    "analyt"        => { emoji: "📈"  },
+    "operations"             => { emoji: "⚙️" },
+    "leadership"             => { emoji: "🏆" },
+    "problem-solving"        => { emoji: "🧩" },
+    "critical-thinking"      => { emoji: "🔍" },
+    "adaptability"           => { emoji: "🌱" },
+    "empathy"                => { emoji: "🤝" },
+    "curiosity"              => { emoji: "💡" },
+    "kpis"                   => { emoji: "📊" },
+    "communication"          => { emoji: "💬" },
+    "teamwork"               => { emoji: "🤝" },
+    "ownership"              => { emoji: "🎯" },
+    "resilience"             => { emoji: "💪" },
+    "time-management"        => { emoji: "⏱️" },
+    "creativity"             => { emoji: "🎨" },
+    "roadmapping"            => { emoji: "🗺️" },
+    "prioritization"         => { emoji: "🔢" },
+    "stakeholder-management" => { emoji: "🤝" },
+    "wireframes"             => { emoji: "📐" },
+    "user-journey-mapping"   => { emoji: "🗺️" },
+    "smart-methodology"      => { emoji: "🎯" },
+    "feature-prioritization" => { emoji: "✨" },
+    "agile"                  => { emoji: "🔄" },
+    "scrum"                  => { emoji: "🔄" },
+    "kanban"                 => { emoji: "📋" },
   }
 
   # Skills selected in the form
@@ -384,124 +308,15 @@
         <% pill_classes = %w[match-green match-blue match-yellow] %>
         <% delay_classes = ["sr d1", "sr d2", "sr d3"] %>
 
-        <%
-          # Hard skill aliases — lean list, mostly exact tech names
-          hard_aliases = {
-            "rails"     => %w[rails],
-            "ruby"      => %w[ruby],
-            "js"        => %w[javascript typescript],
-            "ts"        => %w[typescript],
-            "sql"       => %w[postgresql sql dados data banco database],
-            "html"      => %w[html],
-            "css"       => %w[css],
-            "git"       => %w[git],
-            "github"    => %w[github],
-            "figma"     => %w[figma design prototip wireframe],
-            "heroku"    => %w[heroku deploy],
-            "nodejs"    => %w[node nodejs],
-            "react"     => %w[react],
-            "nextjs"    => %w[next nextjs],
-            "python"    => %w[python],
-            "docker"    => %w[docker container],
-            "aws"       => %w[aws amazon cloud nuvem],
-          }
-
-          # Soft skill aliases — covers both Portuguese and English API responses
-          # Keys must match what skill_key.call() returns, not the display name
-          soft_aliases = {
-            "leadership"  => %w[leader lider lideran lidera gestão gere gerencia
-                                coordena manage direct supervis chefi responsav
-                                responsib head],
-            "problem"     => %w[problem resolv solut debug troubleshoot analys
-                                diagnos solucionar resolver identific challenge
-                                desafio obstacle],
-            "comm"        => %w[communic comunic present report stakeholder
-                                redacao escrita verbal negoci relacion interfac],
-            "adapt"       => %w[adapt flex agil pivot change dynamic versatil
-                                mudança ambiente context different various varios],
-            "critical"    => %w[critical analytical analyt strateg decis priorit
-                                analis avalia julgamento estrutura logical logico],
-            "empathy"     => %w[empat user client customer human people team
-                                usuario cliente pessoa relacion centrado centered],
-            "curiosity"   => %w[curious learn research explore innovat growth
-                                aprender aprendizado descobr invest proactiv
-                                iniciativa],
-            "ownership"   => %w[owner responsib accountab autonomy proactiv
-                                initiative responsav dono proprio independ autonom],
-            "ops"         => %w[operat process workflow coordinat logistic execut
-                                operacao operacional processo procedimento fluxo
-                                pipeline supply infraestrut],
-            "kpis"        => %w[kpi metric data measur dashboard report analyt
-                                indicador resultado performance objetivo meta
-                                goal okr acompanhar monitorar track],
-            "teamwork"    => %w[team collabor colleg squad pair equipe time junto
-                                conjunto cross interfunc multidiscipl parceria],
-            "time"        => %w[time deadline priorit schedul organiz plan prazo
-                                tempo organiza prioriza agenda eficien],
-            "resilience"  => %w[resili pressur stress challeng obstacle persist
-                                pressao dificil adversidade superar crise critica
-                                olimp olympic],
-            "stakeholder" => %w[stakeholder client partner sponsor c-level execut
-                                director board fornecedor parceiro patrocinador
-                                diretoria lideranca],
-          }
-        %>
-
         <% roles.each_with_index do |role, i| %>
           <% cargo       = cargos[i] || {} %>
           <% match_score = cargo["percentual_compatibilidade"] || [87, 82, 79][i] %>
           <% description = cargo["descricao"].presence || role.justification.to_s.truncate(140) %>
           <% breakdown   = cargo["breakdown"] || [] %>
-          <%
-            # Priority 1: explicit highlights stored on the role (seed / manual data)
-            mf_highlights = role.market_fit&.dig("highlights")
-
-            if mf_highlights.present?
-              highlights = mf_highlights.to_json
-            else
-              # Build searchable text blob from all role-specific fields
-              role_text = [
-                cargo["titulo"], cargo["descricao"], cargo["justificativa"],
-                cargo["mensagem_chloe"],
-                breakdown.map { |b| "#{b["passado"]} #{b["futuro"]}" }
-              ].flatten.compact.join(" ").downcase
-
-              # Hard skill matching
-              matched_hard = hard_skills.select { |s|
-                key = skill_key.call(s)
-                aliases = hard_aliases[key] || []
-                aliases.any? { |kw| role_text.include?(kw) } ||
-                s.to_s.downcase.split(/[\s\/\-]+/).select { |w| w.length >= 4 }.any? { |w| role_text.include?(w) }
-              }
-              matched_hard_keys = matched_hard.map { |s| skill_key.call(s) }
-
-              # Soft skill matching — uses expanded PT+EN alias table
-              matched_soft = soft_skills.select { |s|
-                key = skill_key.call(s)
-                aliases = soft_aliases[key] || [s.to_s.downcase.split(" ").first]
-                aliases.any? { |a| role_text.include?(a) }
-              }
-              soft_highlights = matched_soft.map { |s| skill_key.call(s) }
-
-              # Minimum guarantee: at least 2 soft highlights per card
-              if soft_highlights.length < 2
-                soft_highlights = soft_skills.first(3).map { |s| skill_key.call(s) }
-              end
-
-              highlights = (matched_hard_keys + soft_highlights).uniq.to_json
-            end
-          %>
-
-          <% if Rails.env.development? %>
-            <!-- DEBUG role <%= cargo["titulo"] %>:
-              role_text_sample: <%= role_text&.first(300) %>
-              matched_soft: <%= matched_soft&.map { |s| skill_key.call(s) } %>
-              all_soft_keys: <%= soft_skills.map { |s| skill_key.call(s) } %>
-            -->
-          <% end %>
+          <% highlights  = role.market_fit&.dig("highlights") || [] %>
 
           <div class="career-card <%= delay_classes[i] %>"
-               data-highlights="<%= highlights %>"
+               data-highlights="<%= highlights.to_json %>"
                onmouseenter="highlightSkills(this)"
                onmouseleave="clearHighlights()"
                onclick="window.location='<%= role_path(role) %>'">

@@ -74,6 +74,14 @@ class ClaudeAnalyser
     - Percentages: Role 1 = 82–92%, Role 2 = 73–83%, Role 3 = 64–76%. Never multiples of 5.
     - `rotulo_compatibilidade`: use EXACTLY — 82–92% = "Excellent Fit", 73–83% = "Good Fit", 64–76% = "Solid Fit".
     - Career axes: Axis A (prior experience) < 3 yrs = Entry-level, 3–5 = Mid-level, > 5 = Senior. Axis B (tech maturity) bootcamp = Junior, bootcamp + tech exp = Mid.
+    - `highlights`: array of 4–8 skill slugs from the student's confirmed skills that are most relevant to THIS specific role.
+      Slug rule: lowercase, spaces → hyphens, "/" → "-", " on " → "-". Examples:
+        "Ruby on Rails" → "ruby-on-rails" | "JavaScript" → "javascript" | "HTML/CSS" → "html-css"
+        "Git/GitHub" → "git-github" | "Problem Solving" → "problem-solving"
+        "Critical Thinking" → "critical-thinking" | "Adaptability" → "adaptability"
+        "Empathy" → "empathy" | "Leadership" → "leadership" | "KPIs" → "kpis"
+      Rules: Only include skills the student actually confirmed. Include both hard AND soft skills.
+      Each of the 3 roles MUST have a DIFFERENT highlights array (4–8 slugs each).
 
     ## REFERENCE EXAMPLE
 
@@ -92,6 +100,7 @@ class ClaudeAnalyser
           { "icone": "🤝", "passado": "Led teams at L'Oréal", "futuro": "Communicates with stakeholders" },
           { "icone": "🎯", "passado": "A/B testing 3 years", "futuro": "Ships features fast" }
         ],
+        "highlights": ["ruby-on-rails", "javascript", "sql", "git-github", "problem-solving", "curiosity"],
         "mercados": {
           "Brazil": { "salario": "R$ 3,500 – R$ 6,000", "periodo": "per month", "demanda": "High", "percentual_demanda": 76, "tendencia": "↑ +23% junior dev roles in SP in 2025", "tempo_contratacao": "3 – 5 weeks", "insight": "Fintechs in SP grew headcount 34% in 2025, seeking profiles that bridge business and tech stack. <strong>Madalena's L'Oréal background and English fluency</strong> eliminate the two most common objections to bootcamp graduates." }
         },

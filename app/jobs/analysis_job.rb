@@ -23,10 +23,10 @@ class AnalysisJob < ApplicationJob
 
     result["cargos_sugeridos"].each_with_index do |cargo, i|
       analysis.roles.create!(
-        title: cargo["titulo"],
+        title:        cargo["titulo"],
         justification: cargo["justificativa"],
-        market_fit: cargo["mercados"],
-        position: i + 1
+        market_fit:   (cargo["mercados"] || {}).merge("highlights" => cargo["highlights"] || []),
+        position:     i + 1
       )
     end
   rescue => e

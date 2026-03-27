@@ -59,7 +59,7 @@ Role.create!(
   market_fit: {
     "match_score"  => 87,
     "description"  => "Your Rails stack is production-ready from day one. And unlike most junior devs, you bring 7 years of real-world delivery — an edge most candidates can't fake.",
-    "highlights"   => ["rails", "ruby", "js", "git", "ops", "leadership", "kpis"],
+    "highlights"   => ["ruby-on-rails", "ruby", "javascript", "git", "operations", "leadership", "kpis"],
     "match_reasons" => [
       { "text" => "<strong>Ruby on Rails →</strong> fullstack ready from day one, no ramp-up needed",                        "green" => false },
       { "text" => "<strong>7 years operations →</strong> product sense and delivery rigour most junior devs lack",           "green" => false },
@@ -76,7 +76,7 @@ Role.create!(
   market_fit: {
     "match_score"  => 82,
     "description"  => "You've spent years optimising complex operations. Now you can build the tools you once had to request from engineers — a rare and powerful combination.",
-    "highlights"   => ["ops", "leadership", "kpis", "critical", "js", "sql"],
+    "highlights"   => ["operations", "leadership", "kpis", "critical-thinking", "javascript", "sql"],
     "match_reasons" => [
       { "text" => "<strong>Operations management →</strong> direct domain expertise, zero learning curve",                   "green" => true  },
       { "text" => "<strong>KPIs & data-driven decisions →</strong> product metrics are already your language",               "green" => true  },
@@ -93,7 +93,7 @@ Role.create!(
   market_fit: {
     "match_score"  => 79,
     "description"  => "You've led cross-functional teams at scale. Your new technical literacy gives you credibility with dev teams that most PMs don't have.",
-    "highlights"   => ["leadership", "empathy", "problem", "rails", "figma"],
+    "highlights"   => ["leadership", "empathy", "problem-solving", "ruby-on-rails", "figma"],
     "match_reasons" => [
       { "text" => "<strong>Leadership + stakeholder management →</strong> core PM skills you already practise daily",        "green" => true  },
       { "text" => "<strong>Rails + Figma →</strong> technical credibility to bridge product and engineering",                "green" => false },
