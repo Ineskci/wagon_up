@@ -7,6 +7,8 @@ window.toggleTag = function(el) {
     if (selected >= 5) return;
   }
   el.classList.toggle("active");
+  if (typeof updateSoftCounter === 'function') updateSoftCounter();
+  if (typeof updatePreview === 'function') updatePreview();
 };
 
 window.goSetupStep2 = function() {
