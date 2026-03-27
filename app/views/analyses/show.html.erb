@@ -85,6 +85,45 @@
     elsif n.include?("heroku")                              then "heroku"
     elsif n.include?("websocket")                           then "websocket"
     elsif n.include?("node")                                then "nodejs"
+    elsif n.include?("docker")                              then "docker"
+    elsif n.include?("kubernetes") || n == "k8s"            then "kubernetes"
+    elsif n.include?("amazon") || n == "aws"                then "aws"
+    elsif n.include?("redis")                               then "redis"
+    elsif n.include?("graphql")                             then "graphql"
+    elsif n.include?("tailwind")                            then "tailwind"
+    elsif n.include?("bootstrap")                           then "bootstrap"
+    elsif n.include?("sass") || n.include?("scss")          then "sass"
+    elsif n.include?("vue")                                 then "vue"
+    elsif n.include?("angular")                             then "angular"
+    elsif n.include?("django")                              then "django"
+    elsif n.include?("flask")                               then "flask"
+    elsif n.include?("fastapi")                             then "fastapi"
+    elsif n.include?("spring")                              then "spring"
+    elsif n.include?("mongodb") || n.include?("mongo")      then "mongodb"
+    elsif n.include?("mysql")                               then "mysql"
+    elsif n.include?("firebase")                            then "firebase"
+    elsif n.include?("supabase")                            then "supabase"
+    elsif n.include?("prisma")                              then "prisma"
+    elsif n.include?("stripe")                              then "stripe"
+    elsif n.include?("openai")                              then "openai"
+    elsif n.include?("rest api") || n == "rest"             then "rest"
+    elsif n.include?("postman")                             then "postman"
+    elsif n.include?("linux")                               then "linux"
+    elsif n.include?("bash")                                then "bash"
+    elsif n.include?("ci/cd") || n.include?("cicd")        then "cicd"
+    elsif n.include?("github actions")                      then "ghactions"
+    elsif n.include?("vercel")                              then "vercel"
+    elsif n.include?("netlify")                             then "netlify"
+    elsif n.include?("cloudflare")                          then "cloudflare"
+    elsif n.include?("nginx")                               then "nginx"
+    elsif n.include?("swift")                               then "swift"
+    elsif n.include?("kotlin")                              then "kotlin"
+    elsif n.include?("flutter")                             then "flutter"
+    elsif n.include?("react native")                        then "react"
+    elsif n.include?("solidity")                            then "solidity"
+    elsif n.include?("web3")                                then "web3"
+    elsif n.include?("webpack")                             then "webpack"
+    elsif n.include?("vite")                                then "vite"
     elsif n.include?("operat")                              then "ops"
     elsif n.include?("leadership") || n.include?("manag")   then "leadership"
     elsif n.include?("problem")                             then "problem"
@@ -133,6 +172,31 @@
     "nextjs"     => "nextjs/nextjs-original",
     "python"     => "python/python-original",
     "websocket"  => "nodejs/nodejs-plain",
+    "docker"     => "docker/docker-original",
+    "kubernetes" => "kubernetes/kubernetes-plain",
+    "aws"        => "amazonwebservices/amazonwebservices-original",
+    "redis"      => "redis/redis-original",
+    "graphql"    => "graphql/graphql-plain",
+    "tailwind"   => "tailwindcss/tailwindcss-plain",
+    "bootstrap"  => "bootstrap/bootstrap-original",
+    "sass"       => "sass/sass-original",
+    "vue"        => "vuejs/vuejs-original",
+    "angular"    => "angularjs/angularjs-original",
+    "django"     => "django/django-plain",
+    "flask"      => "flask/flask-original",
+    "mongodb"    => "mongodb/mongodb-original",
+    "mysql"      => "mysql/mysql-original",
+    "firebase"   => "firebase/firebase-plain",
+    "swift"      => "swift/swift-original",
+    "kotlin"     => "kotlin/kotlin-original",
+    "flutter"    => "flutter/flutter-original",
+    "linux"      => "linux/linux-original",
+    "bash"       => "bash/bash-original",
+    "webpack"    => "webpack/webpack-original",
+    "vite"       => "vitejs/vitejs-original",
+    "nginx"      => "nginx/nginx-original",
+    "vercel"     => "vercel/vercel-original",
+    "netlify"    => "netlify/netlify-original",
   }
 
   # Soft skill emoji — covers both selected and domain/methodological skills from CV
