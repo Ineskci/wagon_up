@@ -67,83 +67,125 @@
   # Map skill name → short key used in data-skill and highlights arrays
   skill_key = ->(name) {
     n = name.to_s.downcase.strip
-    if    n == "git/github" || n == "git / github"         then "git"
-    elsif n == "html/css"  || n == "html / css"            then "html"
-    elsif n.include?("ruby on rails") || n == "rails"      then "rails"
-    elsif n.include?("ruby")                               then "ruby"
-    elsif n.include?("javascript") || n == "js"            then "js"
-    elsif n.include?("postgresql") || n.include?("sql")    then "sql"
-    elsif n.include?("html")                               then "html"
-    elsif n.include?("css")                                then "css"
-    elsif n.include?("github")                             then "github"
-    elsif n.include?("git")                                then "git"
-    elsif n.include?("figma")                              then "figma"
-    elsif n.include?("heroku")                             then "heroku"
-    elsif n.include?("websocket") || n.include?("node")    then "nodejs"
-    elsif n.include?("react")                              then "react"
-    elsif n.include?("operat")                             then "ops"
-    elsif n.include?("leadership") || n.include?("manag")  then "leadership"
-    elsif n.include?("problem")                            then "problem"
-    elsif n.include?("critical")                           then "critical"
-    elsif n.include?("adapt")                              then "adapt"
-    elsif n.include?("empath")                             then "empathy"
-    elsif n.include?("curiosit")                           then "curiosity"
-    elsif n.include?("kpi")                                then "kpis"
-    elsif n.include?("communic")                           then "comm"
-    elsif n.include?("teamwork") || n.include?("collab")   then "teamwork"
+    if    n == "git/github" || n == "git / github"          then "git"
+    elsif n == "html/css"   || n == "html / css"            then "html"
+    elsif n.include?("ruby on rails") || n == "rails"       then "rails"
+    elsif n.include?("ruby")                                then "ruby"
+    elsif n.include?("typescript")                          then "ts"
+    elsif n.include?("javascript") || n == "js"             then "js"
+    elsif n.include?("next.js") || n.include?("nextjs")     then "nextjs"
+    elsif n.include?("react")                               then "react"
+    elsif n.include?("postgresql") || n.include?("sql")     then "sql"
+    elsif n.include?("python")                              then "python"
+    elsif n.include?("html")                                then "html"
+    elsif n.include?("css")                                 then "css"
+    elsif n.include?("github")                              then "github"
+    elsif n.include?("git")                                 then "git"
+    elsif n.include?("figma")                               then "figma"
+    elsif n.include?("heroku")                              then "heroku"
+    elsif n.include?("websocket")                           then "websocket"
+    elsif n.include?("node")                                then "nodejs"
+    elsif n.include?("operat")                              then "ops"
+    elsif n.include?("leadership") || n.include?("manag")   then "leadership"
+    elsif n.include?("problem")                             then "problem"
+    elsif n.include?("critical")                            then "critical"
+    elsif n.include?("adapt")                               then "adapt"
+    elsif n.include?("empath")                              then "empathy"
+    elsif n.include?("curiosit")                            then "curiosity"
+    elsif n.include?("kpi")                                 then "kpis"
+    elsif n.include?("communic")                            then "comm"
+    elsif n.include?("teamwork") || n.include?("collab")    then "teamwork"
+    elsif n.include?("ownership")                           then "ownership"
+    elsif n.include?("resilien")                            then "resilience"
+    elsif n.include?("time manag")                          then "time"
+    elsif n.include?("creativ")                             then "creativity"
+    elsif n.include?("roadmap")                             then "roadmap"
+    elsif n.include?("priorit")                             then "priorit"
+    elsif n.include?("stakeholder")                         then "stakeholder"
+    elsif n.include?("wireframe")                           then "wireframe"
+    elsif n.include?("user journey")                        then "user_journey"
+    elsif n.include?("smart")                               then "smart"
+    elsif n.include?("feature")                             then "feature"
+    elsif n.include?("agile")                               then "agile"
+    elsif n.include?("scrum")                               then "scrum"
+    elsif n.include?("kanban")                              then "kanban"
+    elsif n.include?("analyt") || n.include?("analís")      then "analyt"
     else  n.gsub(/[^a-z0-9]/, "_")
     end
   }
 
-  # devicon slug per key
+  # devicon slug per key — this IS the hard-skills whitelist.
+  # Any skill whose key is not here will NOT appear in the hard skills grid.
   devicons = {
-    "rails"  => "rails/rails-plain",
-    "ruby"   => "ruby/ruby-original",
-    "js"     => "javascript/javascript-original",
-    "sql"    => "postgresql/postgresql-original",
-    "html"   => "html5/html5-original",
-    "css"    => "css3/css3-original",
-    "git"    => "git/git-original",
-    "github" => "github/github-original",
-    "figma"  => "figma/figma-original",
-    "heroku" => "heroku/heroku-original",
-    "nodejs" => "nodejs/nodejs-plain",
-    "react"  => "react/react-original",
+    "rails"      => "rails/rails-plain",
+    "ruby"       => "ruby/ruby-original",
+    "js"         => "javascript/javascript-original",
+    "ts"         => "typescript/typescript-original",
+    "sql"        => "postgresql/postgresql-original",
+    "html"       => "html5/html5-original",
+    "css"        => "css3/css3-original",
+    "git"        => "git/git-original",
+    "github"     => "github/github-original",
+    "figma"      => "figma/figma-original",
+    "heroku"     => "heroku/heroku-original",
+    "nodejs"     => "nodejs/nodejs-plain",
+    "react"      => "react/react-original",
+    "nextjs"     => "nextjs/nextjs-original",
+    "python"     => "python/python-original",
+    "websocket"  => "nodejs/nodejs-plain",
   }
 
-  # Soft skill emoji
+  # Soft skill emoji — covers both selected and domain/methodological skills from CV
   soft_meta = {
-    "ops"        => { emoji: "⚙️"  },
-    "leadership" => { emoji: "🏆"  },
-    "problem"    => { emoji: "🧩"  },
-    "critical"   => { emoji: "🔍"  },
-    "adapt"      => { emoji: "🌱"  },
-    "empathy"    => { emoji: "🤝"  },
-    "curiosity"  => { emoji: "💡"  },
-    "kpis"       => { emoji: "📊"  },
-    "comm"       => { emoji: "💬"  },
-    "teamwork"   => { emoji: "🤝"  },
+    "ops"           => { emoji: "⚙️"  },
+    "leadership"    => { emoji: "🏆"  },
+    "problem"       => { emoji: "🧩"  },
+    "critical"      => { emoji: "🔍"  },
+    "adapt"         => { emoji: "🌱"  },
+    "empathy"       => { emoji: "🤝"  },
+    "curiosity"     => { emoji: "💡"  },
+    "kpis"          => { emoji: "📊"  },
+    "comm"          => { emoji: "💬"  },
+    "teamwork"      => { emoji: "🤝"  },
+    "ownership"     => { emoji: "🎯"  },
+    "resilience"    => { emoji: "💪"  },
+    "time"          => { emoji: "⏱️"  },
+    "creativity"    => { emoji: "🎨"  },
+    "roadmap"       => { emoji: "🗺️"  },
+    "priorit"       => { emoji: "🔢"  },
+    "stakeholder"   => { emoji: "🤝"  },
+    "wireframe"     => { emoji: "📐"  },
+    "user_journey"  => { emoji: "🗺️"  },
+    "smart"         => { emoji: "🎯"  },
+    "feature"       => { emoji: "✨"  },
+    "agile"         => { emoji: "🔄"  },
+    "scrum"         => { emoji: "🔄"  },
+    "kanban"        => { emoji: "📋"  },
+    "analyt"        => { emoji: "📈"  },
   }
 
   # Skills selected in the form
   form_hard = @analysis.hard_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
   form_hard = ["Ruby on Rails", "Ruby", "JavaScript", "PostgreSQL", "HTML5", "CSS3", "Git", "GitHub", "Figma", "Heroku"] if form_hard.blank?
 
-  soft_skills = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
-  soft_skills = ["Operations", "Leadership", "Problem Solving", "Critical Thinking", "Adaptability", "Empathy", "Curiosity", "KPIs"] if soft_skills.blank?
+  form_soft = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
+  form_soft = ["Operations", "Leadership", "Problem Solving", "Critical Thinking", "Adaptability", "Empathy", "Curiosity", "KPIs"] if form_soft.blank?
 
   # Skills extracted from CV by Claude (analise_lacunas.tenho, saved in analysis.skills)
   # Items look like: "Ruby on Rails — fullstack (Le Wagon, 2 projects)", "React + JavaScript", "SQL & PostgreSQL"
   tenho_raw = (JSON.parse(@analysis.skills.to_s) rescue [])
   cv_skills = tenho_raw.flat_map { |s|
-    # Strip the description after " — " or " – "
     skill_part = s.to_s.split(/\s*[—–]\s*/).first.to_s.strip
-    # Split compound entries like "React + JavaScript" or "Git & GitHub"
     skill_part.split(/\s*[+&]\s*/).map(&:strip)
   }.reject(&:blank?)
 
-  # Merge: form selection + CV-extracted, deduplicated by normalised key
-  hard_skills = (form_hard + cv_skills).uniq { |s| skill_key.call(s) }
+  # Merge all candidate hard skills, then split by whether they have a devicon
+  all_hard = (form_hard + cv_skills).uniq { |s| skill_key.call(s) }
+  hard_skills  = all_hard.select { |s| devicons.key?(skill_key.call(s)) }
+  leftover_cv  = all_hard.reject { |s| devicons.key?(skill_key.call(s)) }
+
+  # Soft skills = form soft + leftover CV skills (domain/methodological), deduplicated
+  soft_skills = (form_soft + leftover_cv).uniq { |s| skill_key.call(s) }
 
   # ── Real API data from raw_json ──────────────────────────────────────────
   raw         = @analysis.raw_json || {}
@@ -247,10 +289,10 @@
             These words help your CV pass automated filters before a human reads it.
           </div>
           <div class="keyword-tags" id="kwGrid">
-            <% hard_skills.first(6).each do |kw| %>
+            <% hard_skills.first(5).each do |kw| %>
               <span class="kw-tag kw-tech" data-skill="<%= skill_key.call(kw) %>"><%= kw %></span>
             <% end %>
-            <% soft_skills.first(5).each do |kw| %>
+            <% soft_skills.first(6).each do |kw| %>
               <span class="kw-tag kw-soft" data-skill="<%= skill_key.call(kw) %>"><%= kw %></span>
             <% end %>
           </div>
