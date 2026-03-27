@@ -9,34 +9,35 @@
 
 <% if @analysis.status == "processing" %>
 
-  <div class="profile-hero">
-    <div class="container position-relative" style="z-index:1">
-      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-        <div>
-          <div style="font-size:.78rem;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Your Analysis</div>
-          <h1 style="font-size:2.2rem;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:.4rem"><%= current_user.name %></h1>
-          <p style="color:rgba(255,255,255,.6);font-size:.95rem">We are analysing your CV...</p>
-        </div>
-        <div class="match-badge" style="opacity:.4">
-          <span class="match-pct">--</span>
-          <span class="match-lbl">Analysing</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="container py-7 text-center">
-    <div style="max-width:480px;margin:0 auto;padding:4rem 0">
-      <div style="font-size:3rem;margin-bottom:1.5rem">✦</div>
-      <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:.75rem">We are working on it</h2>
-      <p style="color:var(--ink-3);font-size:.9rem;line-height:1.7;margin-bottom:2rem">
-        We're analysing your CV. This takes about 1–2 minutes.<br>
-      </p>
-      <div style="display:flex;justify-content:center;gap:.5rem">
-        <span style="width:8px;height:8px;border-radius:50%;background:var(--brand);animation:pulse 1.2s ease-in-out infinite"></span>
-        <span style="width:8px;height:8px;border-radius:50%;background:var(--brand);animation:pulse 1.2s ease-in-out .4s infinite"></span>
-        <span style="width:8px;height:8px;border-radius:50%;background:var(--brand);animation:pulse 1.2s ease-in-out .8s infinite"></span>
+    <div style="max-width:520px;margin:0 auto;padding:4rem 0">
+
+      <div class="loading-icon-wrap">
+        <%= image_tag "chloe_avatar.png", alt: "Chloe", class: "loading-chloe-avatar" %>
       </div>
+
+      <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:.5rem">Chloe is on it</h2>
+      <p style="color:var(--ink-3);font-size:.85rem;margin-bottom:2rem">This takes about 1–2 minutes</p>
+
+      <div class="loading-message-wrap">
+        <p class="loading-msg" id="loadingMsg">Identifying your transferable skills...</p>
+      </div>
+
+      <div class="loading-steps">
+        <div class="loading-step active" id="step0">
+          <div class="ls-dot"></div>
+          <span>Identifying your transferable skills</span>
+        </div>
+        <div class="loading-step" id="step1">
+          <div class="ls-dot"></div>
+          <span>Mapping your career fit</span>
+        </div>
+        <div class="loading-step" id="step2">
+          <div class="ls-dot"></div>
+          <span>Building your personalized profile</span>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -45,7 +46,108 @@
       0%, 100% { opacity: .2; transform: scale(.8); }
       50%       { opacity: 1;  transform: scale(1.2); }
     }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .loading-icon-wrap {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 1.5rem;
+      border: 3px solid var(--brand-dim);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .loading-chloe-avatar {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transform: scale(1.9);
+    }
+    .loading-message-wrap {
+      min-height: 2rem;
+      margin-bottom: 2rem;
+    }
+    .loading-msg {
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--brand);
+      animation: fadeSlideUp .5s ease;
+    }
+    .loading-steps {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      text-align: left;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .loading-step {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-size: .85rem;
+      color: var(--ink-3);
+      transition: color .4s;
+    }
+    .loading-step.active { color: var(--ink); font-weight: 600; }
+    .loading-step.done   { color: var(--ink-3); text-decoration: line-through; }
+    .loading-step.done .ls-dot   { background: #16a34a; }
+    .loading-step.active .ls-dot { background: var(--brand); animation: pulse 1s ease-in-out infinite; }
+    .ls-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+      transition: background .4s;
+    }
   </style>
+
+  <script>
+    (function() {
+      const analysisId = "<%= @analysis.id %>";
+      const messages = [
+        "Identifying your transferable skills...",
+        "Mapping your career fit...",
+        "Building your personalized profile..."
+      ];
+
+      // Reset state if this is a new analysis
+      if (window._loadingAnalysisId !== analysisId) {
+        window._loadingAnalysisId = analysisId;
+        window._loadingStep = 0;
+        window._loadingTimersSet = false;
+      }
+
+      // Re-apply the stored step to the current DOM (called after every Turbo refresh)
+      function applyState() {
+        const current = window._loadingStep || 0;
+        for (let i = 0; i < messages.length; i++) {
+          const el = document.getElementById('step' + i);
+          if (!el) continue;
+          el.classList.remove('active', 'done');
+          if (i < current)        el.classList.add('done');
+          else if (i === current) el.classList.add('active');
+        }
+        const msgEl = document.getElementById('loadingMsg');
+        if (msgEl) msgEl.textContent = messages[current];
+      }
+
+      // Always re-apply on each Turbo render
+      applyState();
+
+      // Only start timers once per analysis
+      if (window._loadingTimersSet) return;
+      window._loadingTimersSet = true;
+
+      function advance() {
+        window._loadingStep = Math.min((window._loadingStep || 0) + 1, messages.length - 1);
+        applyState();
+      }
+
+      setTimeout(() => advance(), 20000);
+      setTimeout(() => advance(), 40000);
+    })();
+  </script>
 
 <% elsif @analysis.status == "failed" %>
 
