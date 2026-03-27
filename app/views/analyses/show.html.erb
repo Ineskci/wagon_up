@@ -67,28 +67,30 @@
   # Map skill name → short key used in data-skill and highlights arrays
   skill_key = ->(name) {
     n = name.to_s.downcase.strip
-    if    n.include?("ruby on rails") || n == "rails"  then "rails"
-    elsif n.include?("ruby")                            then "ruby"
-    elsif n.include?("javascript") || n == "js"        then "js"
-    elsif n.include?("postgresql") || n.include?("sql") then "sql"
-    elsif n.include?("html")                            then "html"
-    elsif n.include?("css")                             then "css"
-    elsif n.include?("github")                          then "github"
-    elsif n.include?("git")                             then "git"
-    elsif n.include?("figma")                           then "figma"
-    elsif n.include?("heroku")                          then "heroku"
-    elsif n.include?("websocket") || n.include?("node") then "nodejs"
-    elsif n.include?("react")                           then "react"
-    elsif n.include?("operat")                          then "ops"
-    elsif n.include?("leadership") || n.include?("manag") then "leadership"
-    elsif n.include?("problem")                         then "problem"
-    elsif n.include?("critical")                        then "critical"
-    elsif n.include?("adapt")                           then "adapt"
-    elsif n.include?("empath")                          then "empathy"
-    elsif n.include?("curiosit")                        then "curiosity"
-    elsif n.include?("kpi")                             then "kpis"
-    elsif n.include?("communic")                        then "comm"
-    elsif n.include?("teamwork") || n.include?("collab") then "teamwork"
+    if    n == "git/github" || n == "git / github"         then "git"
+    elsif n == "html/css"  || n == "html / css"            then "html"
+    elsif n.include?("ruby on rails") || n == "rails"      then "rails"
+    elsif n.include?("ruby")                               then "ruby"
+    elsif n.include?("javascript") || n == "js"            then "js"
+    elsif n.include?("postgresql") || n.include?("sql")    then "sql"
+    elsif n.include?("html")                               then "html"
+    elsif n.include?("css")                                then "css"
+    elsif n.include?("github")                             then "github"
+    elsif n.include?("git")                                then "git"
+    elsif n.include?("figma")                              then "figma"
+    elsif n.include?("heroku")                             then "heroku"
+    elsif n.include?("websocket") || n.include?("node")    then "nodejs"
+    elsif n.include?("react")                              then "react"
+    elsif n.include?("operat")                             then "ops"
+    elsif n.include?("leadership") || n.include?("manag")  then "leadership"
+    elsif n.include?("problem")                            then "problem"
+    elsif n.include?("critical")                           then "critical"
+    elsif n.include?("adapt")                              then "adapt"
+    elsif n.include?("empath")                             then "empathy"
+    elsif n.include?("curiosit")                           then "curiosity"
+    elsif n.include?("kpi")                                then "kpis"
+    elsif n.include?("communic")                           then "comm"
+    elsif n.include?("teamwork") || n.include?("collab")   then "teamwork"
     else  n.gsub(/[^a-z0-9]/, "_")
     end
   }
@@ -109,39 +111,57 @@
     "react"  => "react/react-original",
   }
 
-  # Soft skill emoji + display name
+  # Soft skill emoji
   soft_meta = {
-    "ops"       => { emoji: "⚙️",  label: "Operations"       },
-    "leadership"=> { emoji: "🏆",  label: "Leadership"        },
-    "problem"   => { emoji: "🧩",  label: "Problem Solving"   },
-    "critical"  => { emoji: "🔍",  label: "Critical Thinking" },
-    "adapt"     => { emoji: "🌱",  label: "Adaptability"      },
-    "empathy"   => { emoji: "🤝",  label: "Empathy"           },
-    "curiosity" => { emoji: "💡",  label: "Curiosity"         },
-    "kpis"      => { emoji: "📊",  label: "KPIs"              },
-    "comm"      => { emoji: "💬",  label: "Communication"     },
-    "teamwork"  => { emoji: "🤝",  label: "Teamwork"          },
+    "ops"        => { emoji: "⚙️"  },
+    "leadership" => { emoji: "🏆"  },
+    "problem"    => { emoji: "🧩"  },
+    "critical"   => { emoji: "🔍"  },
+    "adapt"      => { emoji: "🌱"  },
+    "empathy"    => { emoji: "🤝"  },
+    "curiosity"  => { emoji: "💡"  },
+    "kpis"       => { emoji: "📊"  },
+    "comm"       => { emoji: "💬"  },
+    "teamwork"   => { emoji: "🤝"  },
   }
 
-  hard_skills = @analysis.hard_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
-  hard_skills = ["Ruby on Rails", "Ruby", "JavaScript", "PostgreSQL", "HTML5", "CSS3", "Git", "GitHub", "Figma", "Heroku"] if hard_skills.blank?
+  # Skills selected in the form
+  form_hard = @analysis.hard_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
+  form_hard = ["Ruby on Rails", "Ruby", "JavaScript", "PostgreSQL", "HTML5", "CSS3", "Git", "GitHub", "Figma", "Heroku"] if form_hard.blank?
 
   soft_skills = @analysis.soft_skills_selected.to_s.split(/,\s*/).reject(&:blank?)
   soft_skills = ["Operations", "Leadership", "Problem Solving", "Critical Thinking", "Adaptability", "Empathy", "Curiosity", "KPIs"] if soft_skills.blank?
 
+  # Skills extracted from CV by Claude (analise_lacunas.tenho, saved in analysis.skills)
+  # Items look like: "Ruby on Rails — fullstack (Le Wagon, 2 projects)", "React + JavaScript", "SQL & PostgreSQL"
+  tenho_raw = (JSON.parse(@analysis.skills.to_s) rescue [])
+  cv_skills = tenho_raw.flat_map { |s|
+    # Strip the description after " — " or " – "
+    skill_part = s.to_s.split(/\s*[—–]\s*/).first.to_s.strip
+    # Split compound entries like "React + JavaScript" or "Git & GitHub"
+    skill_part.split(/\s*[+&]\s*/).map(&:strip)
+  }.reject(&:blank?)
+
+  # Merge: form selection + CV-extracted, deduplicated by normalised key
+  hard_skills = (form_hard + cv_skills).uniq { |s| skill_key.call(s) }
+
+  # ── Real API data from raw_json ──────────────────────────────────────────
+  raw         = @analysis.raw_json || {}
+  cargos      = raw["cargos_sugeridos"] || []
+
   roles       = @roles.presence || @analysis.roles.order(:position).limit(3).to_a
   top_role    = roles.first
 
-  # Hero score: first role's match_score, fallback to 87
-  hero_score  = top_role&.market_fit&.dig("match_score") || 87
+  # Hero score from real API data
+  hero_score  = cargos.first&.dig("percentual_compatibilidade") || 87
 
-  # Chloe message (stored in summary)
-  chloe_msg   = @analysis.summary.presence || "Your profile is ready — here's how Chloe mapped your skills."
+  # Chloe message
+  chloe_msg   = @analysis.summary.presence || raw.dig("estudante", "resumo_chloe").presence || "Your profile is ready."
 %>
 
 <%# ── HERO ── %>
-<div class="profile-hero">
-  <div class="container hero-inner">
+<div class="profile-hero" style="background:#0d0920;padding:3rem 0 2.5rem;position:relative;overflow:hidden;">
+  <div class="container hero-inner" style="position:relative;z-index:1;">
     <div class="d-flex align-items-start justify-content-between flex-wrap gap-4">
       <div>
         <div class="hero-eyebrow">Your AI Analysis</div>
@@ -258,12 +278,66 @@
         <% pill_classes = %w[match-green match-blue match-yellow] %>
         <% delay_classes = ["sr d1", "sr d2", "sr d3"] %>
 
+        <%
+          # PT+EN keyword aliases per skill key — used to match Portuguese API responses
+          skill_aliases = {
+            "rails"      => %w[rails],
+            "ruby"       => %w[ruby],
+            "js"         => %w[javascript typescript],
+            "sql"        => %w[postgresql sql dados data banco database],
+            "html"       => %w[html],
+            "css"        => %w[css],
+            "git"        => %w[git],
+            "github"     => %w[github],
+            "figma"      => %w[figma design prototip],
+            "heroku"     => %w[heroku deploy],
+            "ops"        => %w[opera operac logist process processos produto product],
+            "leadership" => %w[lideran gestao gestão manag coordena equipe team squad],
+            "problem"    => %w[problem resoluc soluç solut],
+            "critical"   => %w[critico critical anali],
+            "adapt"      => %w[adapt],
+            "empathy"    => %w[empatia empathy stakeholder],
+            "curiosity"  => %w[curiosit aprendiz learning],
+            "kpis"       => %w[kpi metrica metric dados data],
+            "comm"       => %w[comunic communic],
+            "teamwork"   => %w[colabo colabor collab],
+          }
+        %>
+
         <% roles.each_with_index do |role, i| %>
-          <% mf          = role.market_fit || {} %>
-          <% match_score = mf["match_score"] || [87, 82, 79][i] %>
-          <% description = mf["description"].presence || role.justification.to_s.truncate(140) %>
-          <% reasons     = mf["match_reasons"] || [] %>
-          <% highlights  = (mf["highlights"] || []).to_json %>
+          <% cargo       = cargos[i] || {} %>
+          <% match_score = cargo["percentual_compatibilidade"] || [87, 82, 79][i] %>
+          <% description = cargo["descricao"].presence || role.justification.to_s.truncate(140) %>
+          <% breakdown   = cargo["breakdown"] || [] %>
+          <%
+            # Priority 1: explicit highlights stored on the role (seed / manual data)
+            mf_highlights = role.market_fit&.dig("highlights")
+
+            if mf_highlights.present?
+              highlights = mf_highlights.to_json
+            else
+              # Priority 2: text search across all role fields (PT + EN aliases)
+              cargo_text = [
+                cargo["titulo"], cargo["descricao"], cargo["justificativa"],
+                cargo["mensagem_chloe"],
+                breakdown.map { |b| "#{b["passado"]} #{b["futuro"]}" }
+              ].flatten.compact.join(" ").downcase
+
+              skill_relevant = ->(name) {
+                key = skill_key.call(name)
+                aliases = skill_aliases[key] || []
+                # Check alias keywords against cargo_text
+                aliases.any? { |kw| cargo_text.include?(kw) } ||
+                # Fallback: any word ≥4 chars from skill name
+                name.to_s.downcase.split(/[\s\/\-]+/).select { |w| w.length >= 4 }.any? { |w| cargo_text.include?(w) }
+              }
+
+              highlights = (hard_skills + soft_skills)
+                .select { |s| skill_relevant.call(s) }
+                .map    { |s| skill_key.call(s) }
+                .compact.uniq.to_json
+            end
+          %>
 
           <div class="career-card <%= delay_classes[i] %>"
                data-highlights="<%= highlights %>"
@@ -279,12 +353,14 @@
               <p class="career-card-desc"><%= description %></p>
             </div>
 
-            <% if reasons.any? %>
+            <% if breakdown.any? %>
               <div class="match-reasons">
-                <% reasons.first(3).each do |r| %>
+                <% breakdown.first(3).each_with_index do |item, j| %>
                   <div class="match-reason">
-                    <div class="mr-icon <%= r["green"] ? "green" : "" %>">✦</div>
-                    <div class="mr-text"><%= raw(r["text"]) %></div>
+                    <div class="mr-icon <%= j == 2 ? "green" : "" %>">✦</div>
+                    <div class="mr-text">
+                      <strong><%= item["passado"] %> →</strong> <%= item["futuro"] %>
+                    </div>
                   </div>
                 <% end %>
               </div>
