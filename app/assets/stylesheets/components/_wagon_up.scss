@@ -432,13 +432,13 @@ body {
 }
 
 .setup-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 2.5rem;
-  max-width: 720px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  max-width: 1050px;
   margin: 0 auto;
-  box-shadow: var(--shadow);
+  box-shadow: none;
 }
 
 .progress-steps {
