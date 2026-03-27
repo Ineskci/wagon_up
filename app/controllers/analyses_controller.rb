@@ -32,6 +32,7 @@ class AnalysesController < ApplicationController
     @analysis.hard_skills_selected = params[:analysis][:hard_skills_selected]
     @analysis.soft_skills_selected = params[:analysis][:soft_skills_selected]
     @analysis.target_markets = params[:analysis][:target_markets].presence || "Brazil, Portugal, United States"
+    @analysis.wagon_program = params[:wagon_program].presence
 
     if @analysis.save
       @analysis.file.attach(params[:analysis][:file])

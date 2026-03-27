@@ -60,6 +60,7 @@ class CvGeneratorService
       ## Target role context
       - Role: #{@role.title}
       - Why this role fits: #{@role.justification}
+      - Le Wagon programme completed: #{bootcamp_label}
       - Confirmed technical skills: #{@analysis.hard_skills_selected.presence || "Ruby on Rails, JavaScript, SQL, HTML/CSS, Git"}
       - Confirmed soft skills: #{@analysis.soft_skills_selected.presence || "Communication, Problem Solving, Adaptability"}
 
@@ -108,6 +109,17 @@ class CvGeneratorService
       - All text values in English. Proper names preserved.
       - Return the JSON object only — no commentary, no markdown.
     PROMPT
+  end
+
+  def bootcamp_label
+    labels = {
+      "ai_software"     => "AI Software Development (Ruby on Rails, JavaScript, OpenAI API, Claude Code)",
+      "data_analytics"  => "Data Analytics (Python, SQL, Google Analytics, Looker Studio)",
+      "data_science"    => "Data Science (Python, SQL, Machine Learning)",
+      "data_engineering" => "Data Engineering (Python, SQL, pipelines)",
+      "growth_marketing" => "Growth Marketing (SEO, Paid Ads, CRM, Analytics)"
+    }
+    labels[@analysis.wagon_program.to_s] || "Full-Stack Web Development (Ruby on Rails, JavaScript, SQL, HTML/CSS)"
   end
 
   def cv_text_excerpt
