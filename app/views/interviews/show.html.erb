@@ -32,7 +32,6 @@
               </span>
             <% end %>
             <%= button_to "×", interview_path(iv), method: :delete,
-                  data: { turbo_confirm: "Delete this session?" },
                   style: "background:none;border:none;color:var(--ink-3);font-size:1rem;cursor:pointer;padding:0 2px;flex-shrink:0;line-height:1;" %>
           </div>
         <% end %>
