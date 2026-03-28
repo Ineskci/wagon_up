@@ -11,7 +11,7 @@
     <div class="wu-sidebar-inner">
 
       <% if @role %>
-        <%= link_to "+ New Session", new_role_interview_path(@role), class: "btn-wu btn-wu-primary btn-wu-full mb-3" %>
+        <%= button_to "+ New Session", role_interviews_path(@role), method: :post, class: "btn-wu btn-wu-primary btn-wu-full mb-3", style: "border:none;cursor:pointer;" %>
       <% end %>
 
       <div style="font-size:.72rem;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem">

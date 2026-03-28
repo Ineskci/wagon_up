@@ -8,9 +8,9 @@
   <div class="wu-sidebar" id="wuSidebar">
     <div class="wu-sidebar-inner">
 
-      <button class="btn-wu btn-wu-primary btn-wu-full mb-3" type="button" disabled>
-        + New Session
-      </button>
+      <% if @role %>
+        <%= button_to "+ New Session", role_interviews_path(@role), method: :post, class: "btn-wu btn-wu-primary btn-wu-full mb-3", style: "border:none;cursor:pointer;" %>
+      <% end %>
 
       <div style="font-size:.72rem;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem">
         Past Sessions
