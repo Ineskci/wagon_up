@@ -218,7 +218,7 @@ class InterviewsController < ApplicationController
       pending.update!(feedback: feedback, score: 0)
     else
       feedback = ask_fresh(feedback_prompt(pending))
-      pending.update!(feedback: feedback, score: extract_score(feedback))
+      pending.update!(feedback: clean_feedback(feedback), score: extract_score(feedback))
     end
 
     @history << { role: "assistant", content: feedback }
@@ -233,7 +233,7 @@ class InterviewsController < ApplicationController
       pending.update!(feedback: feedback, score: 0)
     else
       feedback = ask_fresh(feedback_prompt(pending))
-      pending.update!(feedback: feedback, score: extract_score(feedback))
+      pending.update!(feedback: clean_feedback(feedback), score: extract_score(feedback))
     end
 
     @history << { role: "assistant", content: feedback }
@@ -384,6 +384,15 @@ class InterviewsController < ApplicationController
     end
     positive = feedback_text.match?(/congratulations|correct|excellent|well done|great|perfect|right/i)
     positive ? rand(7..9) : rand(3..5)
+  end
+
+  # Remove score line from feedback text so it doesn't duplicate the pill in the UI
+  # Strips patterns like: "**Score: 5/10**", "Score: 7/10", "Score 8/10 —", etc.
+  def clean_feedback(text)
+    text.to_s
+        .gsub(/\*{0,2}Score[:\s]+\d{1,2}\s*\/\s*10\*{0,2}[\s\-–—:]*/i, "")
+        .gsub(/\A[\s\n]+/, "")
+        .strip
   end
 
   # ── Authorization helpers ─────────────────────────────────────────────────
