@@ -186,6 +186,14 @@ class InterviewsController < ApplicationController
     end
   end
 
+  # DELETE /interviews/:id
+  def destroy
+    interview = current_user_interview(params[:id])
+    role = interview.role
+    interview.destroy
+    redirect_to new_role_interview_path(role), status: :see_other
+  end
+
   # GET /interviews/:id/results
   def results
     @interview = current_user_interview(params[:id])
