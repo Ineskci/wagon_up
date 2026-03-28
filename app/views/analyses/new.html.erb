@@ -72,17 +72,15 @@
                 <div class="section-label" style="margin-bottom:0">🧠 WHAT MAKES YOU UNIQUE BEYOND CODE</div>
                 <span id="softCounter"
                       style="font-size:.75rem;font-weight:700;color:#6C3EF4;background:#F3F0FF;border:1px solid #E5DEFF;border-radius:100px;padding:3px 10px;white-space:nowrap;flex-shrink:0;">
-                  0 / 7
+                  0 / 5
                 </span>
               </div>
-              <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Choose up to 7 skills</p>
+              <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Choose up to 5 skills</p>
               <div id="softSkills">
                 <span class="skill-tag" data-skill="Problem Solving"        onclick="toggleTag(this)">Problem Solving</span>
                 <span class="skill-tag" data-skill="Curiosity"              onclick="toggleTag(this)">Curiosity</span>
-                <span class="skill-tag" data-skill="Resilience"             onclick="toggleTag(this)">Resilience</span>
                 <span class="skill-tag" data-skill="Communication"          onclick="toggleTag(this)">Communication</span>
                 <span class="skill-tag" data-skill="Collaboration"          onclick="toggleTag(this)">Collaboration</span>
-                <span class="skill-tag" data-skill="Empathy"                onclick="toggleTag(this)">Empathy</span>
                 <span class="skill-tag" data-skill="Ownership"              onclick="toggleTag(this)">Ownership</span>
                 <span class="skill-tag" data-skill="Adaptability"           onclick="toggleTag(this)">Adaptability</span>
                 <span class="skill-tag" data-skill="Leadership"             onclick="toggleTag(this)">Leadership</span>
@@ -203,8 +201,8 @@ function updateSoftCounter() {
   const selected = document.querySelectorAll('#softSkills .skill-tag.active').length;
   const counter = document.getElementById('softCounter');
   if (!counter) return;
-  counter.textContent = selected + ' / 7';
-  if (selected >= 7) {
+  counter.textContent = selected + ' / 5';
+  if (selected >= 5) {
     counter.style.background = '#6C3EF4';
     counter.style.color = '#fff';
     counter.style.borderColor = '#6C3EF4';
