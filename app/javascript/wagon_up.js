@@ -4,7 +4,7 @@ window.toggleTag = function(el) {
   const isSoftSkill = el.closest("#softSkills");
   if (isSoftSkill && !el.classList.contains("active")) {
     const selected = document.querySelectorAll("#softSkills .skill-tag.active").length;
-    if (selected >= 5) return;
+    if (selected >= 7) return;
   }
   el.classList.toggle("active");
   if (typeof updateSoftCounter === 'function') updateSoftCounter();
@@ -175,12 +175,10 @@ function initCountrySelector() {
 }
 
 window.collectSkills = function() {
-  const hard = [...document.querySelectorAll("#hardSkills .skill-tag.active")].map(el => el.textContent);
-  const soft = [...document.querySelectorAll("#softSkills .skill-tag.active")].map(el => el.textContent);
-  const hardInput = document.getElementById("hardSkillsInput");
+  const soft = [...document.querySelectorAll("#softSkills .skill-tag.active")].map(el => el.textContent.trim());
   const softInput = document.getElementById("softSkillsInput");
-  if (hardInput) hardInput.value = hard.join(", ");
   if (softInput) softInput.value = soft.join(", ");
+  // hardSkillsInput is populated by selectProgram() — do not overwrite here
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

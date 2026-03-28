@@ -55,12 +55,12 @@
             <div class="mb-4">
               <div class="section-label">🎓 Which Le Wagon program did you complete?</div>
               <p style="font-size:.82rem;color:#71717A;margin:.3rem 0 .75rem;">
-                We'll pre-select your bootcamp skills automatically.
+                Your bootcamp technical skills will be included automatically.
               </p>
               <div style="display:flex;flex-wrap:wrap;gap:.5rem;" id="programTags">
-                <span class="program-tag" data-program="ai_software"    onclick="selectProgram(this)">🤖 AI Software Development</span>
-                <span class="program-tag" data-program="data_analytics" onclick="selectProgram(this)">📊 Data Analytics</span>
-                <span class="program-tag" data-program="data_science"   onclick="selectProgram(this)">🧪 Data Science</span>
+                <span class="program-tag" data-program="ai_software"      onclick="selectProgram(this)">🤖 AI Software Development</span>
+                <span class="program-tag" data-program="data_analytics"   onclick="selectProgram(this)">📊 Data Analytics</span>
+                <span class="program-tag" data-program="data_science"     onclick="selectProgram(this)">🧪 Data Science</span>
                 <span class="program-tag" data-program="data_engineering" onclick="selectProgram(this)">⚙️ Data Engineering</span>
                 <span class="program-tag" data-program="growth_marketing" onclick="selectProgram(this)">🚀 Growth Marketing</span>
               </div>
@@ -68,56 +68,27 @@
             </div>
 
             <div class="mb-4">
-              <div class="section-label">🖥️ WHAT YOU LEARNED AT LE WAGON</div>
-              <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Choose skills to add</p>
-              <div id="hardSkills">
-                <span class="skill-tag" data-skill="JavaScript"    onclick="toggleTag(this)">JavaScript</span>
-                <span class="skill-tag" data-skill="SQL"           onclick="toggleTag(this)">SQL</span>
-                <span class="skill-tag" data-skill="Figma"         onclick="toggleTag(this)">Figma</span>
-                <span class="skill-tag" data-skill="Git/GitHub"    onclick="toggleTag(this)">Git/GitHub</span>
-                <span class="skill-tag" data-skill="Ruby on Rails" onclick="toggleTag(this)">Ruby on Rails</span>
-                <span class="skill-tag" data-skill="HTML/CSS"      onclick="toggleTag(this)">HTML/CSS</span>
-                <span class="skill-tag" data-skill="Heroku"        onclick="toggleTag(this)">Heroku</span>
-                <span class="skill-tag" data-skill="WebSocket"     onclick="toggleTag(this)">WebSocket</span>
-                <span class="skill-tag" data-skill="Ruby"          onclick="toggleTag(this)">Ruby</span>
-                <span class="skill-tag" data-skill="OpenAI API"    onclick="toggleTag(this)">OpenAI API</span>
-                <span class="skill-tag" data-skill="Claude Code"   onclick="toggleTag(this)">Claude Code</span>
-                <span class="skill-tag" data-skill="Python"        onclick="toggleTag(this)">Python</span>
-                <span class="skill-tag" data-skill="Google Analytics"    onclick="toggleTag(this)">Google Analytics</span>
-                <span class="skill-tag" data-skill="Looker Studio"       onclick="toggleTag(this)">Looker Studio</span>
-                <span class="skill-tag" data-skill="Google Ads"          onclick="toggleTag(this)">Google Ads</span>
-                <span class="skill-tag" data-skill="HubSpot"             onclick="toggleTag(this)">HubSpot</span>
-                <span class="skill-tag" data-skill="Semrush"             onclick="toggleTag(this)">Semrush</span>
-                <span class="skill-tag" data-skill="Google Tag Manager"  onclick="toggleTag(this)">Google Tag Manager</span>
-                <span class="skill-tag" data-skill="Make"                onclick="toggleTag(this)">Make</span>
-                <span class="skill-tag" data-skill="Webflow"             onclick="toggleTag(this)">Webflow</span>
-                <span class="skill-tag" data-skill="Notion"              onclick="toggleTag(this)">Notion</span>
-                <span class="skill-tag" data-skill="Canva"               onclick="toggleTag(this)">Canva</span>
-                <span class="skill-tag" data-skill="Lemlist"             onclick="toggleTag(this)">Lemlist</span>
-                <span class="skill-tag" data-skill="Typeform"            onclick="toggleTag(this)">Typeform</span>
-              </div>
-            </div>
-
-            <div class="mb-4">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
                 <div class="section-label" style="margin-bottom:0">🧠 WHAT MAKES YOU UNIQUE BEYOND CODE</div>
                 <span id="softCounter"
                       style="font-size:.75rem;font-weight:700;color:#6C3EF4;background:#F3F0FF;border:1px solid #E5DEFF;border-radius:100px;padding:3px 10px;white-space:nowrap;flex-shrink:0;">
-                  0 / 5
+                  0 / 7
                 </span>
               </div>
-              <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Choose up to 5 skills</p>
+              <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Choose up to 7 skills</p>
               <div id="softSkills">
-                <span class="skill-tag" data-skill="Problem Solving"  onclick="toggleTag(this)">Problem Solving</span>
-                <span class="skill-tag" data-skill="Communication"    onclick="toggleTag(this)">Communication</span>
-                <span class="skill-tag" data-skill="Adaptability"     onclick="toggleTag(this)">Adaptability</span>
-                <span class="skill-tag" data-skill="Teamwork"         onclick="toggleTag(this)">Teamwork</span>
-                <span class="skill-tag" data-skill="Time Management"  onclick="toggleTag(this)">Time Management</span>
-                <span class="skill-tag" data-skill="Critical Thinking" onclick="toggleTag(this)">Critical Thinking</span>
-                <span class="skill-tag" data-skill="Resilience"       onclick="toggleTag(this)">Resilience</span>
-                <span class="skill-tag" data-skill="Empathy"          onclick="toggleTag(this)">Empathy</span>
-                <span class="skill-tag" data-skill="Ownership"        onclick="toggleTag(this)">Ownership</span>
-                <span class="skill-tag" data-skill="Curiosity"        onclick="toggleTag(this)">Curiosity</span>
+                <span class="skill-tag" data-skill="Problem Solving"        onclick="toggleTag(this)">Problem Solving</span>
+                <span class="skill-tag" data-skill="Curiosity"              onclick="toggleTag(this)">Curiosity</span>
+                <span class="skill-tag" data-skill="Resilience"             onclick="toggleTag(this)">Resilience</span>
+                <span class="skill-tag" data-skill="Communication"          onclick="toggleTag(this)">Communication</span>
+                <span class="skill-tag" data-skill="Collaboration"          onclick="toggleTag(this)">Collaboration</span>
+                <span class="skill-tag" data-skill="Empathy"                onclick="toggleTag(this)">Empathy</span>
+                <span class="skill-tag" data-skill="Ownership"              onclick="toggleTag(this)">Ownership</span>
+                <span class="skill-tag" data-skill="Adaptability"           onclick="toggleTag(this)">Adaptability</span>
+                <span class="skill-tag" data-skill="Leadership"             onclick="toggleTag(this)">Leadership</span>
+                <span class="skill-tag" data-skill="Critical Thinking"      onclick="toggleTag(this)">Critical Thinking</span>
+                <span class="skill-tag" data-skill="Stakeholder Management" onclick="toggleTag(this)">Stakeholder Management</span>
+                <span class="skill-tag" data-skill="Autonomy"               onclick="toggleTag(this)">Autonomy</span>
               </div>
             </div>
 
@@ -226,12 +197,14 @@
 </div>
 
 <script>
+let currentProgramSkills = [];
+
 function updateSoftCounter() {
   const selected = document.querySelectorAll('#softSkills .skill-tag.active').length;
   const counter = document.getElementById('softCounter');
   if (!counter) return;
-  counter.textContent = selected + ' / 5';
-  if (selected >= 5) {
+  counter.textContent = selected + ' / 7';
+  if (selected >= 7) {
     counter.style.background = '#6C3EF4';
     counter.style.color = '#fff';
     counter.style.borderColor = '#6C3EF4';
@@ -243,17 +216,16 @@ function updateSoftCounter() {
 }
 
 function updatePreview() {
-  const hardTags = document.querySelectorAll('#hardSkills .skill-tag.active');
   const softTags = document.querySelectorAll('#softSkills .skill-tag.active');
 
-  // Hard skills preview
+  // Technical skills preview — from selected programme
   const ph = document.getElementById('previewHard');
   if (ph) {
-    if (hardTags.length === 0) {
-      ph.innerHTML = '<span style="font-size:.78rem;color:#71717A;font-style:italic;">No skills selected yet</span>';
+    if (currentProgramSkills.length === 0) {
+      ph.innerHTML = '<span style="font-size:.78rem;color:#71717A;font-style:italic;">Select your programme first</span>';
     } else {
-      ph.innerHTML = Array.from(hardTags).map(t =>
-        `<span style="padding:4px 10px;border-radius:100px;font-size:.75rem;font-weight:600;background:#F3F0FF;color:#6C3EF4;border:1px solid #E5DEFF;">${t.textContent.trim()}</span>`
+      ph.innerHTML = currentProgramSkills.map(s =>
+        `<span style="padding:4px 10px;border-radius:100px;font-size:.75rem;font-weight:600;background:#F3F0FF;color:#6C3EF4;border:1px solid #E5DEFF;">${s}</span>`
       ).join('');
     }
   }
@@ -294,12 +266,12 @@ function updatePreview() {
   }
 
   // Score estimate
-  const hardCount = hardTags.length;
-  const softCount = softTags.length;
-  const marketCount = countryTexts.length;
-  const total = hardCount + (softCount * 2) + (marketCount * 3);
+  const programBonus = currentProgramSkills.length;
+  const softCount    = softTags.length;
+  const marketCount  = countryTexts.length;
+  const total = programBonus + (softCount * 2) + (marketCount * 3);
   const scoreEl = document.getElementById('previewScore');
-  const subEl = document.getElementById('previewScoreSub');
+  const subEl   = document.getElementById('previewScoreSub');
   let score = null;
   if (total >= 20)      score = 97;
   else if (total >= 16) score = 94;
@@ -316,7 +288,7 @@ function updatePreview() {
       subEl.style.color = '#a78bfa';
     } else {
       scoreEl.textContent = '—';
-      subEl.textContent = 'Select your skills to unlock';
+      subEl.textContent = 'Select your programme to unlock';
       subEl.style.color = 'rgba(255,255,255,.4)';
     }
   }
@@ -325,13 +297,13 @@ function updatePreview() {
   const msg = document.getElementById('chloePreviewMsg');
   if (msg) {
     let step = 0;
-    if (hardTags.length >= 3) step = 1;
+    if (currentProgramSkills.length > 0) step = 1;
     if (softTags.length >= 1) step = 2;
     if (softTags.length >= 3) step = 3;
     const msgs = [
-      '<strong style="color:#6C3EF4;">Hi!</strong> Select your skills and I\'ll build your personalised career analysis.',
-      '<strong style="color:#6C3EF4;">Looking good!</strong> Your tech stack is strong. Add your soft skills to unlock your full score.',
-      '<strong style="color:#6C3EF4;">Great combo!</strong> Your cross-functional profile is taking shape.',
+      '<strong style="color:#6C3EF4;">Hi!</strong> Start by selecting your Le Wagon programme.',
+      '<strong style="color:#6C3EF4;">Great!</strong> Your bootcamp skills are locked in. Now tell me what makes you unique — add your soft skills.',
+      '<strong style="color:#6C3EF4;">Nice!</strong> Your profile is taking shape. Add more soft skills to sharpen it.',
       '<strong style="color:#6C3EF4;">Excellent!</strong> Your profile is ready. Hit the button and let\'s go! 🚀'
     ];
     msg.innerHTML = msgs[step];
@@ -362,27 +334,21 @@ const WAGON_PROGRAMS = {
 }
 
 function selectProgram(el) {
-  // 1. Highlight selected program tag
+  // 1. Highlight selected programme tag
   document.querySelectorAll('.program-tag').forEach(t => t.classList.remove('selected'))
   el.classList.add('selected')
 
-  // 2. Save to hidden field
+  // 2. Save programme key to hidden field
   document.getElementById('wagon_program_field').value = el.dataset.program
 
-  // 3. Uncheck ALL skill tags first
-  document.querySelectorAll('.skill-tag').forEach(t => t.classList.remove('active'))
+  // 3. Save programme skills to hidden field + JS variable
+  currentProgramSkills = WAGON_PROGRAMS[el.dataset.program] || []
+  const hardInput = document.getElementById('hardSkillsInput')
+  if (hardInput) hardInput.value = currentProgramSkills.join(', ')
 
-  // 4. Check only skills for this program
-  const programSkills = WAGON_PROGRAMS[el.dataset.program] || []
-  document.querySelectorAll('.skill-tag').forEach(tag => {
-    if (programSkills.includes(tag.dataset.skill)) {
-      tag.classList.add('active')
-    }
-  })
-
-  // 5. Show confirmation message
+  // 4. Show confirmation message
   const confirm = document.getElementById('programConfirm')
-  confirm.textContent = '✓ ' + programSkills.length + ' skills pre-selected. Add anything extra you know on top.'
+  confirm.textContent = '✓ ' + currentProgramSkills.length + ' technical skills from your programme will be included automatically.'
   confirm.style.display = 'block'
 
   if (typeof updateSoftCounter === 'function') updateSoftCounter()
