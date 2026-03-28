@@ -286,9 +286,26 @@ class InterviewsController < ApplicationController
     (FALLBACK_TOPICS_BY_PROGRAM[program] || DEFAULT_FALLBACK).first(TECHNICAL_QUESTIONS)
   end
 
+  def previous_questions
+    return @previous_questions if defined?(@previous_questions)
+    @previous_questions = Interview.where(role: @role)
+                                   .where.not(id: @interview.id)
+                                   .joins(:answers)
+                                   .pluck("answers.question")
+                                   .compact
+                                   .reject(&:blank?)
+  end
+
+  def avoid_repetition_clause
+    return "" if previous_questions.empty?
+    list = previous_questions.map { |q| "- #{q}" }.join("\n")
+    "\n\nIMPORTANT: The candidate has already been asked these questions in past sessions — ask something DIFFERENT:\n#{list}"
+  end
+
   def first_question_prompt
     "Ask the first technical question about #{technical_topics.first} " \
-    "for the #{@role.title} role. #{QUESTION_FORMAT}"
+    "for the #{@role.title} role. #{QUESTION_FORMAT}" \
+    "#{avoid_repetition_clause}"
   end
 
   def feedback_prompt(answer)
@@ -313,12 +330,14 @@ class InterviewsController < ApplicationController
     if @user_count < TECHNICAL_QUESTIONS
       topic = technical_topics[@user_count]
       "Ask the next technical question about #{topic} " \
-      "for the #{@role.title} role. #{QUESTION_FORMAT}"
+      "for the #{@role.title} role. #{QUESTION_FORMAT}" \
+      "#{avoid_repetition_clause}"
     else
       personal_index = @user_count - TECHNICAL_QUESTIONS
       topic = PERSONAL_TOPICS[personal_index]
       "Ask a personal question about #{topic} for the candidate applying to the #{@role.title} role. " \
-      "The question should be open-ended and encouraging. Do not use options A, B, C."
+      "The question should be open-ended and encouraging. Do not use options A, B, C." \
+      "#{avoid_repetition_clause}"
     end
   end
 
