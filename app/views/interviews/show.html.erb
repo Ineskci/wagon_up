@@ -11,7 +11,7 @@
     <div class="wu-sidebar-inner">
 
       <% if @role %>
-        <%= link_to "+ New Session", new_role_interview_path(@role), class: "btn-wu btn-wu-primary btn-wu-full mb-3" %>
+        <%= button_to "+ New Session", role_interviews_path(@role), method: :post, class: "btn-wu btn-wu-primary btn-wu-full mb-3", style: "border:none;cursor:pointer;" %>
       <% end %>
 
       <div style="font-size:.72rem;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem">
@@ -20,16 +20,20 @@
 
       <% if @interviews.any? %>
         <% @interviews.each do |iv| %>
-          <%= link_to interview_path(iv), class: "wu-session-item text-decoration-none", style: "display:flex" do %>
-            <div style="flex:1">
-              <div style="font-size:.83rem;font-weight:600;color:var(--ink)"><%= iv.role&.title || iv.category.presence || "Interview" %></div>
-              <div style="font-size:.72rem;color:var(--ink-3)"><%= iv.created_at.strftime("%d %b %Y") %></div>
-            </div>
-            <% display_score = iv.overall_score || (iv.answers.loaded? ? iv.avg_score : iv.answers.where.not(score: nil).average(:score)&.round(1)) %>
-            <span class="wu-score-pill <%= score_color_class(display_score&.to_i) %>">
-              <%= display_score ? "#{display_score}/10" : "—" %>
-            </span>
-          <% end %>
+          <div style="display:flex;align-items:center;gap:.3rem;">
+            <%= link_to interview_path(iv), class: "wu-session-item text-decoration-none", style: "display:flex;flex:1;min-width:0;" do %>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:.83rem;font-weight:600;color:var(--ink)"><%= iv.role&.title || iv.category.presence || "Interview" %></div>
+                <div style="font-size:.72rem;color:var(--ink-3)"><%= iv.created_at.strftime("%d %b %Y") %></div>
+              </div>
+              <% display_score = iv.overall_score || (iv.answers.loaded? ? iv.avg_score : iv.answers.where.not(score: nil).average(:score)&.round(1)) %>
+              <span class="wu-score-pill <%= score_color_class(display_score&.to_i) %>">
+                <%= display_score ? "#{display_score}/10" : "—" %>
+              </span>
+            <% end %>
+            <%= button_to "×", interview_path(iv), method: :delete,
+                  style: "background:none;border:none;color:var(--ink-3);font-size:1rem;cursor:pointer;padding:0 2px;flex-shrink:0;line-height:1;" %>
+          </div>
         <% end %>
       <% else %>
         <p style="font-size:.8rem;color:var(--ink-3);padding:.5rem .75rem;line-height:1.6">
@@ -107,19 +111,18 @@
     <%# Conversation history %>
     <div class="wu-chat-messages" data-chat-target="messages">
 
-      <div class="wu-msg bot">
-        <div class="wu-chloe-avatar" style="width:56px;height:56px;flex-shrink:0"><%= image_tag "chloe_avatar.png", alt: "Chloe" %></div>
-        <div class="wu-msg-bubble">
-          Hi, <%= current_user.name.split.first %>!<% if @role %> Today we're practising for the <strong><%= @role.title %></strong> role.<% end %>
-          <% if @interview.answers.none? %>
+      <% if @interview.answers.none? %>
+        <div class="wu-msg bot">
+          <div class="wu-chloe-avatar" style="width:56px;height:56px;flex-shrink:0"><%= image_tag "chloe_avatar.png", alt: "Chloe" %></div>
+          <div class="wu-msg-bubble">
             <% if @interview.overall_score %>
               This interview has been completed.
             <% else %>
               There was a problem generating the first question. Please start a new session.
             <% end %>
-          <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
 
       <%# Replay existing Q&A %>
       <% @interview.answers.each do |answer| %>

@@ -27,8 +27,24 @@ class InterviewsController < ApplicationController
     - #{TECHNICAL_QUESTIONS} technical questions about technologies relevant to the role
     - #{PERSONAL_QUESTIONS} personal questions about motivation, career and goals
 
-    ## Technical questions
-    - Open-ended questions — the candidate answers freely
+    ## Candidate profile
+    The candidate is a Le Wagon bootcamp graduate — junior level, 3–6 months of coding experience.
+    They know the fundamentals but have NOT worked professionally as a developer yet.
+    Calibrate ALL technical questions to this level: bootcamp graduate, first job seeker.
+
+    ## Technical questions — difficulty level: JUNIOR / ENTRY-LEVEL
+    - Test understanding of CONCEPTS and FUNDAMENTALS only
+    - NEVER create scenario-based or implementation questions ("You have a table with... write a query")
+    - NEVER ask about advanced features, design patterns, or system architecture
+    - Ask simple "what is / what does / how would you describe" questions
+    - Good: "What is SQL and what is it used for?"
+    - Good: "What does MVC stand for in Rails?"
+    - Good: "What is Figma and how could a PM use it?"
+    - Bad: "Calculate average session duration per user using GROUP BY"
+    - Bad: "What's the difference between a frame and a component in a design system?"
+    - Bad: "Write a query with LEFT JOIN and date filtering"
+    - Questions must be answerable by someone who completed a 9-week bootcamp with no prior experience
+    - Open-ended — the candidate answers freely in their own words
     - If the answer is correct: congratulate warmly and briefly (1 line)
     - If incorrect: correct warmly. Explain the correct answer in at most 1 line
     - NEVER ask follow-up questions. After the feedback, STOP.
@@ -54,9 +70,17 @@ class InterviewsController < ApplicationController
     - Questions: direct and concise
   PROMPT
 
-  TECHNICAL_TOPICS = ["Ruby on Rails", "HTML", "CSS", "JavaScript", "SQL"].freeze
   PERSONAL_TOPICS  = ["motivation and career transition into tech", "strengths and professional goals"].freeze
   QUESTION_FORMAT  = "Ask a direct and concise question. Do not use options A, B, C — the candidate answers freely.".freeze
+
+  FALLBACK_TOPICS_BY_PROGRAM = {
+    "ai_software"      => ["Ruby on Rails", "JavaScript", "SQL", "OpenAI API", "Git"],
+    "data_analytics"   => ["SQL", "Python", "Google Analytics", "Looker Studio", "Data Visualisation"],
+    "data_science"     => ["Python", "SQL", "Machine Learning", "Data Wrangling", "Git"],
+    "data_engineering" => ["Python", "SQL", "Data Pipelines", "ETL", "Git"],
+    "growth_marketing" => ["Google Analytics", "SEO", "Google Ads", "CRM tools", "A/B Testing"]
+  }.freeze
+  DEFAULT_FALLBACK = ["Ruby on Rails", "JavaScript", "SQL", "HTML/CSS", "Git"].freeze
 
   # Respostas evasivas que recebem score 0 automaticamente sem chamar a API
   EVASIVE_PATTERN = /\A\s*\z|i\s*don'?t\s*know|no\s*idea|^idk$|^skip$|^nothing$|^pass$|^n\/a$/i
@@ -80,6 +104,8 @@ class InterviewsController < ApplicationController
 
     if @interview.save
       begin
+        topics = select_topics_for_role
+        @interview.update!(selected_topics: topics.to_json)
         first_q = ask_fresh(first_question_prompt)
         @interview.answers.create!(question: first_q)
       rescue => e
@@ -160,6 +186,14 @@ class InterviewsController < ApplicationController
     end
   end
 
+  # DELETE /interviews/:id
+  def destroy
+    interview = current_user_interview(params[:id])
+    role = interview.role
+    interview.destroy
+    redirect_to new_role_interview_path(role), status: :see_other
+  end
+
   # GET /interviews/:id/results
   def results
     @interview = current_user_interview(params[:id])
@@ -175,11 +209,14 @@ class InterviewsController < ApplicationController
     EVASIVE_PATTERN.match?(text.strip)
   end
 
-  def zero_score_feedback
-    "Score 0/10. In a real interview, this answer would be disqualifying. " \
-    "Even without direct experience, use the STAR method: describe a similar Situation, " \
-    "the Task you had, the Action you took and the Result. " \
-    "Always give an example — it can be from a personal project or from Le Wagon. Try again!"
+  def zero_score_feedback(is_technical:)
+    if is_technical
+      "Score 0/10. No worries — let me explain. "
+    else
+      "Score 0/10. There's no wrong answer here, but always try! " \
+      "Use the STAR method: Situation, Task, Action, Result. " \
+      "Even an example from Le Wagon or a personal project counts. Try again!"
+    end
   end
 
   # ── Lógica de sequência ───────────────────────────────────────────────────
@@ -192,12 +229,18 @@ class InterviewsController < ApplicationController
   end
 
   def handle_mid_question(pending)
+    is_technical = @user_count <= TECHNICAL_QUESTIONS
     if evasive_answer?(pending.answer)
-      feedback = zero_score_feedback
+      if is_technical
+        explanation = ask_fresh(explain_prompt(pending))
+        feedback = "Score 0/10. No worries — let me explain. #{clean_feedback(explanation)}"
+      else
+        feedback = zero_score_feedback(is_technical: false)
+      end
       pending.update!(feedback: feedback, score: 0)
     else
       feedback = ask_fresh(feedback_prompt(pending))
-      pending.update!(feedback: feedback, score: extract_score(feedback))
+      pending.update!(feedback: clean_feedback(feedback), score: extract_score(feedback))
     end
 
     @history << { role: "assistant", content: feedback }
@@ -207,12 +250,18 @@ class InterviewsController < ApplicationController
   end
 
   def handle_last_question(pending)
+    is_technical = @user_count <= TECHNICAL_QUESTIONS
     if evasive_answer?(pending.answer)
-      feedback = zero_score_feedback
+      if is_technical
+        explanation = ask_fresh(explain_prompt(pending))
+        feedback = "Score 0/10. No worries — let me explain. #{clean_feedback(explanation)}"
+      else
+        feedback = zero_score_feedback(is_technical: false)
+      end
       pending.update!(feedback: feedback, score: 0)
     else
       feedback = ask_fresh(feedback_prompt(pending))
-      pending.update!(feedback: feedback, score: extract_score(feedback))
+      pending.update!(feedback: clean_feedback(feedback), score: extract_score(feedback))
     end
 
     @history << { role: "assistant", content: feedback }
@@ -227,9 +276,71 @@ class InterviewsController < ApplicationController
 
   # ── Prompts ───────────────────────────────────────────────────────────────
 
+  # Returns the 3 topics stored on the interview (set at creation time by Claude)
+  def technical_topics
+    return @technical_topics if defined?(@technical_topics)
+    stored = @interview.selected_topics.presence
+    @technical_topics = stored ? JSON.parse(stored) : fallback_topics
+  end
+
+  # One lightweight Claude call to pick the 3 most relevant skills for the role
+  def select_topics_for_role
+    candidate_skills = @role.analysis.hard_skills_selected.to_s
+                            .split(/,\s*/).map(&:strip).reject(&:blank?)
+
+    if candidate_skills.size < TECHNICAL_QUESTIONS
+      candidate_skills = fallback_topics
+    end
+
+    prompt = <<~PROMPT
+      The candidate is interviewing for the role: #{@role.title}.
+      Role context: #{@role.justification}
+
+      The candidate's confirmed technical skills are: #{candidate_skills.join(", ")}.
+
+      Select exactly #{TECHNICAL_QUESTIONS} skills from the candidate's list that are MOST relevant to the #{@role.title} role.
+      Return ONLY a JSON array of #{TECHNICAL_QUESTIONS} strings. No explanation. No markdown. Example: ["SQL","Python","Git"]
+    PROMPT
+
+    raw = ask_fresh(prompt)
+    parsed = JSON.parse(raw.gsub(/```json|```/, "").strip)
+    parsed.first(TECHNICAL_QUESTIONS)
+  rescue
+    fallback_topics
+  end
+
+  def fallback_topics
+    program = @role.analysis.wagon_program.to_s
+    (FALLBACK_TOPICS_BY_PROGRAM[program] || DEFAULT_FALLBACK).first(TECHNICAL_QUESTIONS)
+  end
+
+  def previous_questions
+    return @previous_questions if defined?(@previous_questions)
+    @previous_questions = Interview.where(role: @role)
+                                   .where.not(id: @interview.id)
+                                   .joins(:answers)
+                                   .pluck("answers.question")
+                                   .compact
+                                   .reject(&:blank?)
+  end
+
+  def avoid_repetition_clause
+    return "" if previous_questions.empty?
+    list = previous_questions.map { |q| "- #{q}" }.join("\n")
+    "\n\nIMPORTANT: The candidate has already been asked these questions in past sessions — ask something DIFFERENT:\n#{list}"
+  end
+
   def first_question_prompt
-    "Ask the first technical question about #{TECHNICAL_TOPICS.first} " \
-    "for the #{@role.title} role. #{QUESTION_FORMAT}"
+    "Ask the first technical question about #{technical_topics.first} " \
+    "for the #{@role.title} role. #{QUESTION_FORMAT}" \
+    "#{avoid_repetition_clause}"
+  end
+
+  def explain_prompt(answer)
+    "The question was: '#{answer.question}'.\n" \
+    "The candidate said they don't know.\n\n" \
+    "Give the correct answer in 2-3 simple sentences, pitched at a bootcamp graduate level. " \
+    "Be warm and educational. End with one sentence of encouragement to keep practising."
   end
 
   def feedback_prompt(answer)
@@ -252,14 +363,16 @@ class InterviewsController < ApplicationController
 
   def next_question_prompt
     if @user_count < TECHNICAL_QUESTIONS
-      topic = TECHNICAL_TOPICS[@user_count]
+      topic = technical_topics[@user_count]
       "Ask the next technical question about #{topic} " \
-      "for the #{@role.title} role. #{QUESTION_FORMAT}"
+      "for the #{@role.title} role. #{QUESTION_FORMAT}" \
+      "#{avoid_repetition_clause}"
     else
       personal_index = @user_count - TECHNICAL_QUESTIONS
       topic = PERSONAL_TOPICS[personal_index]
       "Ask a personal question about #{topic} for the candidate applying to the #{@role.title} role. " \
-      "The question should be open-ended and encouraging. Do not use options A, B, C."
+      "The question should be open-ended and encouraging. Do not use options A, B, C." \
+      "#{avoid_repetition_clause}"
     end
   end
 
@@ -325,6 +438,15 @@ class InterviewsController < ApplicationController
     end
     positive = feedback_text.match?(/congratulations|correct|excellent|well done|great|perfect|right/i)
     positive ? rand(7..9) : rand(3..5)
+  end
+
+  # Remove score line from feedback text so it doesn't duplicate the pill in the UI
+  # Strips patterns like: "**Score: 5/10**", "Score: 7/10", "Score 8/10 —", etc.
+  def clean_feedback(text)
+    text.to_s
+        .gsub(/\*{0,2}Score[:\s]+\d{1,2}\s*\/\s*10\*{0,2}[\s\-–—:]*/i, "")
+        .gsub(/\A[\s\n]+/, "")
+        .strip
   end
 
   # ── Authorization helpers ─────────────────────────────────────────────────
