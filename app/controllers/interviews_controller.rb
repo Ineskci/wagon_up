@@ -54,9 +54,17 @@ class InterviewsController < ApplicationController
     - Questions: direct and concise
   PROMPT
 
-  TECHNICAL_TOPICS = ["Ruby on Rails", "HTML", "CSS", "JavaScript", "SQL"].freeze
   PERSONAL_TOPICS  = ["motivation and career transition into tech", "strengths and professional goals"].freeze
   QUESTION_FORMAT  = "Ask a direct and concise question. Do not use options A, B, C — the candidate answers freely.".freeze
+
+  FALLBACK_TOPICS_BY_PROGRAM = {
+    "ai_software"      => ["Ruby on Rails", "JavaScript", "SQL", "OpenAI API", "Git"],
+    "data_analytics"   => ["SQL", "Python", "Google Analytics", "Looker Studio", "Data Visualisation"],
+    "data_science"     => ["Python", "SQL", "Machine Learning", "Data Wrangling", "Git"],
+    "data_engineering" => ["Python", "SQL", "Data Pipelines", "ETL", "Git"],
+    "growth_marketing" => ["Google Analytics", "SEO", "Google Ads", "CRM tools", "A/B Testing"]
+  }.freeze
+  DEFAULT_FALLBACK = ["Ruby on Rails", "JavaScript", "SQL", "HTML/CSS", "Git"].freeze
 
   # Respostas evasivas que recebem score 0 automaticamente sem chamar a API
   EVASIVE_PATTERN = /\A\s*\z|i\s*don'?t\s*know|no\s*idea|^idk$|^skip$|^nothing$|^pass$|^n\/a$/i
@@ -227,8 +235,22 @@ class InterviewsController < ApplicationController
 
   # ── Prompts ───────────────────────────────────────────────────────────────
 
+  def technical_topics
+    return @technical_topics if defined?(@technical_topics)
+
+    skills = @role.analysis.hard_skills_selected.to_s
+                  .split(/,\s*/).map(&:strip).reject(&:blank?)
+
+    if skills.size >= TECHNICAL_QUESTIONS
+      @technical_topics = skills.first(TECHNICAL_QUESTIONS)
+    else
+      program = @role.analysis.wagon_program.to_s
+      @technical_topics = (FALLBACK_TOPICS_BY_PROGRAM[program] || DEFAULT_FALLBACK).first(TECHNICAL_QUESTIONS)
+    end
+  end
+
   def first_question_prompt
-    "Ask the first technical question about #{TECHNICAL_TOPICS.first} " \
+    "Ask the first technical question about #{technical_topics.first} " \
     "for the #{@role.title} role. #{QUESTION_FORMAT}"
   end
 
@@ -252,7 +274,7 @@ class InterviewsController < ApplicationController
 
   def next_question_prompt
     if @user_count < TECHNICAL_QUESTIONS
-      topic = TECHNICAL_TOPICS[@user_count]
+      topic = technical_topics[@user_count]
       "Ask the next technical question about #{topic} " \
       "for the #{@role.title} role. #{QUESTION_FORMAT}"
     else
