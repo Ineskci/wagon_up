@@ -88,6 +88,8 @@ class InterviewsController < ApplicationController
 
     if @interview.save
       begin
+        topics = select_topics_for_role
+        @interview.update!(selected_topics: topics.to_json)
         first_q = ask_fresh(first_question_prompt)
         @interview.answers.create!(question: first_q)
       rescue => e
@@ -235,18 +237,42 @@ class InterviewsController < ApplicationController
 
   # ── Prompts ───────────────────────────────────────────────────────────────
 
+  # Returns the 3 topics stored on the interview (set at creation time by Claude)
   def technical_topics
     return @technical_topics if defined?(@technical_topics)
+    stored = @interview.selected_topics.presence
+    @technical_topics = stored ? JSON.parse(stored) : fallback_topics
+  end
 
-    skills = @role.analysis.hard_skills_selected.to_s
-                  .split(/,\s*/).map(&:strip).reject(&:blank?)
+  # One lightweight Claude call to pick the 3 most relevant skills for the role
+  def select_topics_for_role
+    candidate_skills = @role.analysis.hard_skills_selected.to_s
+                            .split(/,\s*/).map(&:strip).reject(&:blank?)
 
-    if skills.size >= TECHNICAL_QUESTIONS
-      @technical_topics = skills.first(TECHNICAL_QUESTIONS)
-    else
-      program = @role.analysis.wagon_program.to_s
-      @technical_topics = (FALLBACK_TOPICS_BY_PROGRAM[program] || DEFAULT_FALLBACK).first(TECHNICAL_QUESTIONS)
+    if candidate_skills.size < TECHNICAL_QUESTIONS
+      candidate_skills = fallback_topics
     end
+
+    prompt = <<~PROMPT
+      The candidate is interviewing for the role: #{@role.title}.
+      Role context: #{@role.justification}
+
+      The candidate's confirmed technical skills are: #{candidate_skills.join(", ")}.
+
+      Select exactly #{TECHNICAL_QUESTIONS} skills from the candidate's list that are MOST relevant to the #{@role.title} role.
+      Return ONLY a JSON array of #{TECHNICAL_QUESTIONS} strings. No explanation. No markdown. Example: ["SQL","Python","Git"]
+    PROMPT
+
+    raw = ask_fresh(prompt)
+    parsed = JSON.parse(raw.gsub(/```json|```/, "").strip)
+    parsed.first(TECHNICAL_QUESTIONS)
+  rescue
+    fallback_topics
+  end
+
+  def fallback_topics
+    program = @role.analysis.wagon_program.to_s
+    (FALLBACK_TOPICS_BY_PROGRAM[program] || DEFAULT_FALLBACK).first(TECHNICAL_QUESTIONS)
   end
 
   def first_question_prompt

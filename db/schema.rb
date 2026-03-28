@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_27_235044) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_28_011252) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -77,6 +77,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_27_235044) do
     t.string "mode"
     t.integer "overall_score"
     t.bigint "role_id", null: false
+    t.text "selected_topics"
     t.datetime "updated_at", null: false
     t.index ["role_id"], name: "index_interviews_on_role_id"
   end
