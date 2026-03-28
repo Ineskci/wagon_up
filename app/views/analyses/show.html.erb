@@ -291,6 +291,7 @@
         <div class="hero-eyebrow">Your AI Analysis</div>
         <h1 class="hero-name"><%= current_user.name %></h1>
         <p class="hero-tagline"><%= raw.dig("estudante", "headline").presence || "Full Stack Developer" %></p>
+        <p style="font-size:.95rem;color:rgba(255,255,255,.65);margin-top:1rem;max-width:640px;line-height:1.6;"><%= raw(chloe_msg) %></p>
       </div>
       <div class="hero-score">
         <div class="hero-score-val" id="scoreVal" data-target="<%= hero_score %>">0%</div>
@@ -298,17 +299,6 @@
         <div class="hero-score-sub">↗ Top 15% of profiles</div>
       </div>
     </div>
-  </div>
-</div>
-
-<%# ── CHLOE BANNER ── %>
-<div class="chloe-banner">
-  <div class="chloe-av-img">
-    <%= image_tag "chloe_avatar.png", alt: "Chloe" %>
-  </div>
-  <div>
-    <div class="chloe-label">Chloe's take on your profile</div>
-    <p class="chloe-text"><%= raw(chloe_msg) %></p>
   </div>
 </div>
 
