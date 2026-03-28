@@ -198,7 +198,32 @@ class PdfCvBuilder
   end
 
   def safe(str)
-    text = str.to_s.encode("UTF-8", invalid: :replace, undef: :replace, replace: "?")
+    text = str.to_s
+               .gsub("\u2013", "-")   # en-dash  →  -
+               .gsub("\u2014", " - ") # em-dash  →  -
+               .gsub("\u2019", "'")   # right single quote
+               .gsub("\u2018", "'")   # left single quote
+               .gsub("\u201C", '"')   # left double quote
+               .gsub("\u201D", '"')   # right double quote
+               .gsub("\u00E9", "e")   # é
+               .gsub("\u00E8", "e")   # è
+               .gsub("\u00EA", "e")   # ê
+               .gsub("\u00EB", "e")   # ë
+               .gsub("\u00E0", "a")   # à
+               .gsub("\u00E2", "a")   # â
+               .gsub("\u00EE", "i")   # î
+               .gsub("\u00F4", "o")   # ô
+               .gsub("\u00F9", "u")   # ù
+               .gsub("\u00FB", "u")   # û
+               .gsub("\u00FC", "u")   # ü
+               .gsub("\u00E7", "c")   # ç
+               .gsub("\u00C9", "E")   # É
+               .gsub("\u00C8", "E")   # È
+               .gsub("\u00C0", "A")   # À
+               .gsub("\u00CE", "I")   # Î
+               .gsub("\u2026", "...") # ellipsis
+               .gsub("\u00D7", "x")   # ×
+               .encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
     ActiveSupport::Inflector.transliterate(text)
   end
 end
