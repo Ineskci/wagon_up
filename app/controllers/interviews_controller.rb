@@ -27,7 +27,18 @@ class InterviewsController < ApplicationController
     - #{TECHNICAL_QUESTIONS} technical questions about technologies relevant to the role
     - #{PERSONAL_QUESTIONS} personal questions about motivation, career and goals
 
-    ## Technical questions
+    ## Candidate profile
+    The candidate is a Le Wagon bootcamp graduate — junior level, 3–6 months of coding experience.
+    They know the fundamentals but have NOT worked professionally as a developer yet.
+    Calibrate ALL technical questions to this level: bootcamp graduate, first job seeker.
+
+    ## Technical questions — difficulty level: JUNIOR / ENTRY-LEVEL
+    - Test understanding of CONCEPTS and FUNDAMENTALS, not advanced implementation
+    - Good question: "What is a JOIN in SQL and when would you use it?"
+    - Bad question: "Write a query using LEFT JOIN with NOT EXISTS and date filtering"
+    - Good question: "What does Ruby on Rails MVC stand for and what is the role of each part?"
+    - Bad question: "Explain how Rails handles concurrent requests with Puma thread pools"
+    - Questions must be answerable by someone who completed a 9-week bootcamp
     - Open-ended questions — the candidate answers freely
     - If the answer is correct: congratulate warmly and briefly (1 line)
     - If incorrect: correct warmly. Explain the correct answer in at most 1 line
