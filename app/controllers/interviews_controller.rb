@@ -344,6 +344,7 @@ class InterviewsController < ApplicationController
   end
 
   def feedback_prompt(answer)
+    score_instruction = "IMPORTANT: Your response MUST start with exactly 'Score: X/10' on the first line (where X is 0-10). Then your feedback on the next line."
     if @user_count <= TECHNICAL_QUESTIONS
       "The question was: '#{answer.question}'.\n" \
       "The candidate's answer was: '#{answer.answer}'.\n\n" \
@@ -351,13 +352,15 @@ class InterviewsController < ApplicationController
       "If correct: congratulate warmly and briefly (1 line).\n" \
       "If incorrect: correct warmly and encouragingly. " \
       "Explain the correct answer in at most 1 line.\n" \
-      "Do NOT ask any question. Do NOT say 'Let's move on'."
+      "Do NOT ask any question. Do NOT say 'Let's move on'.\n" \
+      "#{score_instruction}"
     else
       "The question was: '#{answer.question}'.\n" \
       "The candidate's answer was: '#{answer.answer}'.\n\n" \
       "Give warm and encouraging feedback about the answer (maximum 2 lines). " \
       "Value the candidate's perspective and connect it to the #{@role.title} role.\n" \
-      "Do NOT ask any question. Do NOT say 'Let's move on'."
+      "Do NOT ask any question. Do NOT say 'Let's move on'.\n" \
+      "#{score_instruction}"
     end
   end
 
@@ -431,13 +434,19 @@ class InterviewsController < ApplicationController
     end
   end
 
-  # Extrai score do texto de feedback — tenta ler número explícito primeiro
+  # Extrai score do texto de feedback — sempre explícito graças ao score_instruction
   def extract_score(feedback_text)
+    return 0 if feedback_text.blank?
+    # Primary: "Score: X/10" format enforced by prompt
+    if (match = feedback_text.match(/score:\s*([0-9]|10)\s*\/\s*10/i))
+      return match[1].to_i
+    end
+    # Fallback: bare "X/10" anywhere in the text
     if (match = feedback_text.match(/\b([0-9]|10)\s*\/\s*10\b/))
       return match[1].to_i
     end
-    positive = feedback_text.match?(/congratulations|correct|excellent|well done|great|perfect|right/i)
-    positive ? rand(7..9) : rand(3..5)
+    # Last resort: deterministic sentiment — no randomness
+    feedback_text.match?(/congratulations|correct|excellent|well done|great|perfect|right/i) ? 7 : 4
   end
 
   # Remove score line from feedback text so it doesn't duplicate the pill in the UI
