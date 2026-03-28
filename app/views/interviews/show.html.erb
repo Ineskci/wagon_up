@@ -107,19 +107,18 @@
     <%# Conversation history %>
     <div class="wu-chat-messages" data-chat-target="messages">
 
-      <div class="wu-msg bot">
-        <div class="wu-chloe-avatar" style="width:56px;height:56px;flex-shrink:0"><%= image_tag "chloe_avatar.png", alt: "Chloe" %></div>
-        <div class="wu-msg-bubble">
-          Hi, <%= current_user.name.split.first %>!<% if @role %> Today we're practising for the <strong><%= @role.title %></strong> role.<% end %>
-          <% if @interview.answers.none? %>
+      <% if @interview.answers.none? %>
+        <div class="wu-msg bot">
+          <div class="wu-chloe-avatar" style="width:56px;height:56px;flex-shrink:0"><%= image_tag "chloe_avatar.png", alt: "Chloe" %></div>
+          <div class="wu-msg-bubble">
             <% if @interview.overall_score %>
               This interview has been completed.
             <% else %>
               There was a problem generating the first question. Please start a new session.
             <% end %>
-          <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
 
       <%# Replay existing Q&A %>
       <% @interview.answers.each do |answer| %>
