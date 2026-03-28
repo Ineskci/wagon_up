@@ -33,13 +33,18 @@ class InterviewsController < ApplicationController
     Calibrate ALL technical questions to this level: bootcamp graduate, first job seeker.
 
     ## Technical questions — difficulty level: JUNIOR / ENTRY-LEVEL
-    - Test understanding of CONCEPTS and FUNDAMENTALS, not advanced implementation
-    - Good question: "What is a JOIN in SQL and when would you use it?"
-    - Bad question: "Write a query using LEFT JOIN with NOT EXISTS and date filtering"
-    - Good question: "What does Ruby on Rails MVC stand for and what is the role of each part?"
-    - Bad question: "Explain how Rails handles concurrent requests with Puma thread pools"
-    - Questions must be answerable by someone who completed a 9-week bootcamp
-    - Open-ended questions — the candidate answers freely
+    - Test understanding of CONCEPTS and FUNDAMENTALS only
+    - NEVER create scenario-based or implementation questions ("You have a table with... write a query")
+    - NEVER ask about advanced features, design patterns, or system architecture
+    - Ask simple "what is / what does / how would you describe" questions
+    - Good: "What is SQL and what is it used for?"
+    - Good: "What does MVC stand for in Rails?"
+    - Good: "What is Figma and how could a PM use it?"
+    - Bad: "Calculate average session duration per user using GROUP BY"
+    - Bad: "What's the difference between a frame and a component in a design system?"
+    - Bad: "Write a query with LEFT JOIN and date filtering"
+    - Questions must be answerable by someone who completed a 9-week bootcamp with no prior experience
+    - Open-ended — the candidate answers freely in their own words
     - If the answer is correct: congratulate warmly and briefly (1 line)
     - If incorrect: correct warmly. Explain the correct answer in at most 1 line
     - NEVER ask follow-up questions. After the feedback, STOP.
@@ -196,11 +201,14 @@ class InterviewsController < ApplicationController
     EVASIVE_PATTERN.match?(text.strip)
   end
 
-  def zero_score_feedback
-    "Score 0/10. In a real interview, this answer would be disqualifying. " \
-    "Even without direct experience, use the STAR method: describe a similar Situation, " \
-    "the Task you had, the Action you took and the Result. " \
-    "Always give an example — it can be from a personal project or from Le Wagon. Try again!"
+  def zero_score_feedback(is_technical:)
+    if is_technical
+      "Score 0/10. No worries — let me explain. "
+    else
+      "Score 0/10. There's no wrong answer here, but always try! " \
+      "Use the STAR method: Situation, Task, Action, Result. " \
+      "Even an example from Le Wagon or a personal project counts. Try again!"
+    end
   end
 
   # ── Lógica de sequência ───────────────────────────────────────────────────
@@ -213,8 +221,14 @@ class InterviewsController < ApplicationController
   end
 
   def handle_mid_question(pending)
+    is_technical = @user_count <= TECHNICAL_QUESTIONS
     if evasive_answer?(pending.answer)
-      feedback = zero_score_feedback
+      if is_technical
+        explanation = ask_fresh(explain_prompt(pending))
+        feedback = "Score 0/10. No worries — let me explain. #{clean_feedback(explanation)}"
+      else
+        feedback = zero_score_feedback(is_technical: false)
+      end
       pending.update!(feedback: feedback, score: 0)
     else
       feedback = ask_fresh(feedback_prompt(pending))
@@ -228,8 +242,14 @@ class InterviewsController < ApplicationController
   end
 
   def handle_last_question(pending)
+    is_technical = @user_count <= TECHNICAL_QUESTIONS
     if evasive_answer?(pending.answer)
-      feedback = zero_score_feedback
+      if is_technical
+        explanation = ask_fresh(explain_prompt(pending))
+        feedback = "Score 0/10. No worries — let me explain. #{clean_feedback(explanation)}"
+      else
+        feedback = zero_score_feedback(is_technical: false)
+      end
       pending.update!(feedback: feedback, score: 0)
     else
       feedback = ask_fresh(feedback_prompt(pending))
@@ -306,6 +326,13 @@ class InterviewsController < ApplicationController
     "Ask the first technical question about #{technical_topics.first} " \
     "for the #{@role.title} role. #{QUESTION_FORMAT}" \
     "#{avoid_repetition_clause}"
+  end
+
+  def explain_prompt(answer)
+    "The question was: '#{answer.question}'.\n" \
+    "The candidate said they don't know.\n\n" \
+    "Give the correct answer in 2-3 simple sentences, pitched at a bootcamp graduate level. " \
+    "Be warm and educational. End with one sentence of encouragement to keep practising."
   end
 
   def feedback_prompt(answer)
