@@ -1073,9 +1073,10 @@ body {
   }
 
   .wu-msg.user & {
-    background: var(--brand);
-    color: #fff;
-    border-radius: 14px 4px 14px 14px;
+    background: #F3EEFF;
+    color: #18181B;
+    border: 1.5px solid #E4D9FF;
+    border-radius: 16px 4px 16px 16px;
   }
 }
 
