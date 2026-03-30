@@ -289,10 +289,14 @@
 <div class="profile-hero" style="background:#0d0920;padding:3rem 0 2.5rem;position:relative;overflow:hidden;">
   <div class="container hero-inner" style="position:relative;z-index:1;">
     <div class="d-flex align-items-start justify-content-between flex-wrap gap-4">
-      <div>
+      <div style="flex:1">
         <div class="hero-eyebrow">Your AI Analysis</div>
         <h1 class="hero-name"><%= current_user.name %></h1>
         <p class="hero-tagline"><%= raw.dig("estudante", "headline").presence || "Full Stack Developer" %></p>
+        <div style="margin-top:1.25rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1rem 1.15rem;">
+          <div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.3rem;">WagonUp's take on your profile</div>
+          <p style="font-size:.85rem;color:rgba(255,255,255,.75);line-height:1.65;margin:0;"><%= raw(chloe_msg) %></p>
+        </div>
       </div>
       <div class="hero-score">
         <div class="hero-score-val" id="scoreVal" data-target="<%= hero_score %>">0%</div>
@@ -300,17 +304,6 @@
         <div class="hero-score-sub">↗ Top 15% of profiles</div>
       </div>
     </div>
-  </div>
-</div>
-
-<%# ── CHLOE BANNER ── %>
-<div class="chloe-banner">
-  <div class="chloe-av-img">
-    <%= image_tag "chloe_avatar.png", alt: "Chloe" %>
-  </div>
-  <div>
-    <div class="chloe-label">Chloe's take on your profile</div>
-    <p class="chloe-text"><%= raw(chloe_msg) %></p>
   </div>
 </div>
 
