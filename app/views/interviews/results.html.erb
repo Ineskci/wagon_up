@@ -21,16 +21,33 @@
     <div style="background:#0f0a1e;border-radius:20px;padding:2.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 80% 50%,rgba(108,62,244,.2),transparent)"></div>
       <div style="position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem">
-        <div>
+        <div style="flex:1">
           <div style="font-size:.75rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem">
             Interview Results
           </div>
-          <h1 style="font-size:1.8rem;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:.5rem">
+          <h1 style="font-size:1.8rem;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:1.25rem">
             <%= @role ? @role.title : "Practice Interview" %>
           </h1>
-          <p style="color:rgba(255,255,255,.55);font-size:.88rem;max-width:420px;line-height:1.6;margin:0">
-            <%= @interview.feedback_summary.presence || "Great effort! Keep practicing to sharpen your answers." %>
-          </p>
+          <% summary = @interview.feedback_summary.presence %>
+          <% if summary %>
+            <% sentences = summary.split(/(?<=\.)\s+/) %>
+            <% strength = sentences.first %>
+            <% improvement = sentences.drop(1).join(' ').presence %>
+            <div style="font-size:.88rem;color:#fff;font-weight:600;line-height:1.6;margin-bottom:.75rem;">
+              <%= strength %>
+            </div>
+            <% if improvement %>
+              <div style="height:1px;background:rgba(255,255,255,.1);margin-bottom:.75rem;"></div>
+              <div style="display:flex;align-items:flex-start;gap:.5rem;">
+                <span style="font-size:.8rem;color:#fbbf24;flex-shrink:0;margin-top:1px;">💡</span>
+                <span style="font-size:.82rem;color:rgba(255,255,255,.55);line-height:1.6;"><%= improvement %></span>
+              </div>
+            <% end %>
+          <% else %>
+            <div style="font-size:.88rem;color:rgba(255,255,255,.55);line-height:1.6;">
+              Great effort! Keep practicing to sharpen your answers.
+            </div>
+          <% end %>
         </div>
         <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:1.5rem;text-align:center;min-width:140px;flex-shrink:0">
           <span style="font-size:3rem;font-weight:800;color:#fff;line-height:1;display:block">
