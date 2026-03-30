@@ -67,59 +67,28 @@
               <p id="programConfirm" style="display:none;font-size:.8rem;color:#6C3EF4;font-weight:600;margin-top:.6rem;"></p>
             </div>
 
-            <div class="mb-4">
-              <div class="section-label">🖥️ WHAT YOU LEARNED AT LE WAGON</div>
-              <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Choose skills to add</p>
-              <div id="hardSkills">
-                <span class="skill-tag" data-skill="JavaScript"    onclick="toggleTag(this)">JavaScript</span>
-                <span class="skill-tag" data-skill="SQL"           onclick="toggleTag(this)">SQL</span>
-                <span class="skill-tag" data-skill="Figma"         onclick="toggleTag(this)">Figma</span>
-                <span class="skill-tag" data-skill="Git/GitHub"    onclick="toggleTag(this)">Git/GitHub</span>
-                <span class="skill-tag" data-skill="Ruby on Rails" onclick="toggleTag(this)">Ruby on Rails</span>
-                <span class="skill-tag" data-skill="HTML/CSS"      onclick="toggleTag(this)">HTML/CSS</span>
-                <span class="skill-tag" data-skill="Heroku"        onclick="toggleTag(this)">Heroku</span>
-                <span class="skill-tag" data-skill="WebSocket"     onclick="toggleTag(this)">WebSocket</span>
-                <span class="skill-tag" data-skill="Ruby"          onclick="toggleTag(this)">Ruby</span>
-                <span class="skill-tag" data-skill="OpenAI API"    onclick="toggleTag(this)">OpenAI API</span>
-                <span class="skill-tag" data-skill="Claude Code"   onclick="toggleTag(this)">Claude Code</span>
-                <span class="skill-tag" data-skill="Python"        onclick="toggleTag(this)">Python</span>
-                <span class="skill-tag" data-skill="Google Analytics"    onclick="toggleTag(this)">Google Analytics</span>
-                <span class="skill-tag" data-skill="Looker Studio"       onclick="toggleTag(this)">Looker Studio</span>
-                <span class="skill-tag" data-skill="Google Ads"          onclick="toggleTag(this)">Google Ads</span>
-                <span class="skill-tag" data-skill="HubSpot"             onclick="toggleTag(this)">HubSpot</span>
-                <span class="skill-tag" data-skill="Semrush"             onclick="toggleTag(this)">Semrush</span>
-                <span class="skill-tag" data-skill="Google Tag Manager"  onclick="toggleTag(this)">Google Tag Manager</span>
-                <span class="skill-tag" data-skill="Make"                onclick="toggleTag(this)">Make</span>
-                <span class="skill-tag" data-skill="Webflow"             onclick="toggleTag(this)">Webflow</span>
-                <span class="skill-tag" data-skill="Notion"              onclick="toggleTag(this)">Notion</span>
-                <span class="skill-tag" data-skill="Canva"               onclick="toggleTag(this)">Canva</span>
-                <span class="skill-tag" data-skill="Lemlist"             onclick="toggleTag(this)">Lemlist</span>
-                <span class="skill-tag" data-skill="Typeform"            onclick="toggleTag(this)">Typeform</span>
-              </div>
-            </div>
+            <div id="hardSkills" style="display:none"></div>
 
             <div class="mb-4">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
                 <div class="section-label" style="margin-bottom:0">🧠 WHAT MAKES YOU UNIQUE BEYOND CODE</div>
                 <span id="softCounter"
                       style="font-size:.75rem;font-weight:700;color:#6C3EF4;background:#F3F0FF;border:1px solid #E5DEFF;border-radius:100px;padding:3px 10px;white-space:nowrap;flex-shrink:0;">
-                  0 / 7
+                  0 / 5
                 </span>
               </div>
-              <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Choose up to 7 skills</p>
+              <p style="font-size:.82rem;color:var(--ink-3);margin-bottom:.75rem">Choose up to 5 skills</p>
               <div id="softSkills">
                 <span class="skill-tag" data-skill="Problem Solving"        onclick="toggleTag(this)">Problem Solving</span>
                 <span class="skill-tag" data-skill="Curiosity"              onclick="toggleTag(this)">Curiosity</span>
                 <span class="skill-tag" data-skill="Resilience"             onclick="toggleTag(this)">Resilience</span>
                 <span class="skill-tag" data-skill="Communication"          onclick="toggleTag(this)">Communication</span>
                 <span class="skill-tag" data-skill="Collaboration"          onclick="toggleTag(this)">Collaboration</span>
-                <span class="skill-tag" data-skill="Empathy"                onclick="toggleTag(this)">Empathy</span>
                 <span class="skill-tag" data-skill="Ownership"              onclick="toggleTag(this)">Ownership</span>
                 <span class="skill-tag" data-skill="Adaptability"           onclick="toggleTag(this)">Adaptability</span>
                 <span class="skill-tag" data-skill="Leadership"             onclick="toggleTag(this)">Leadership</span>
                 <span class="skill-tag" data-skill="Critical Thinking"      onclick="toggleTag(this)">Critical Thinking</span>
                 <span class="skill-tag" data-skill="Stakeholder Management" onclick="toggleTag(this)">Stakeholder Management</span>
-                <span class="skill-tag" data-skill="Autonomy"               onclick="toggleTag(this)">Autonomy</span>
               </div>
             </div>
 
@@ -175,14 +144,22 @@
               </span>
             </div>
 
-            <!-- Tech skills preview -->
+            <!-- Program preview -->
             <div style="margin-bottom:1.25rem;">
+              <div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#71717A;margin-bottom:.6rem;">
+                Program
+              </div>
+              <div id="previewHard">
+                <span style="font-size:.78rem;color:#71717A;font-style:italic;">No program selected yet</span>
+              </div>
+            </div>
+
+            <!-- Technical skills preview (auto from program) -->
+            <div id="previewTechWrap" style="margin-bottom:1.25rem;display:none;">
               <div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#71717A;margin-bottom:.6rem;">
                 Technical Skills
               </div>
-              <div id="previewHard" style="display:flex;flex-wrap:wrap;gap:.35rem;min-height:28px;">
-                <span style="font-size:.78rem;color:#71717A;font-style:italic;">No skills selected yet</span>
-              </div>
+              <div id="previewTech" style="display:flex;flex-wrap:wrap;gap:.35rem;"></div>
             </div>
 
             <!-- Soft skills preview -->
@@ -232,8 +209,8 @@ function updateSoftCounter() {
   const selected = document.querySelectorAll('#softSkills .skill-tag.active').length;
   const counter = document.getElementById('softCounter');
   if (!counter) return;
-  counter.textContent = selected + ' / 7';
-  if (selected >= 7) {
+  counter.textContent = selected + ' / 5';
+  if (selected >= 5) {
     counter.style.background = '#6C3EF4';
     counter.style.color = '#fff';
     counter.style.borderColor = '#6C3EF4';
@@ -248,15 +225,14 @@ function updatePreview() {
   const hardTags = document.querySelectorAll('#hardSkills .skill-tag.active');
   const softTags = document.querySelectorAll('#softSkills .skill-tag.active');
 
-  // Hard skills preview
+  // Program preview
   const ph = document.getElementById('previewHard');
   if (ph) {
-    if (hardTags.length === 0) {
-      ph.innerHTML = '<span style="font-size:.78rem;color:#71717A;font-style:italic;">No skills selected yet</span>';
+    const selectedProgram = document.querySelector('.program-tag.selected');
+    if (selectedProgram) {
+      ph.innerHTML = `<span style="padding:5px 12px;border-radius:100px;font-size:.78rem;font-weight:600;background:#F3F0FF;color:#6C3EF4;border:1px solid #E5DEFF;">${selectedProgram.textContent.trim()}</span>`;
     } else {
-      ph.innerHTML = Array.from(hardTags).map(t =>
-        `<span style="padding:4px 10px;border-radius:100px;font-size:.75rem;font-weight:600;background:#F3F0FF;color:#6C3EF4;border:1px solid #E5DEFF;">${t.textContent.trim()}</span>`
-      ).join('');
+      ph.innerHTML = '<span style="font-size:.78rem;color:#71717A;font-style:italic;">No program selected yet</span>';
     }
   }
 
@@ -374,17 +350,24 @@ function selectProgram(el) {
   // 3. Uncheck ALL skill tags first
   document.querySelectorAll('.skill-tag').forEach(t => t.classList.remove('active'))
 
-  // 4. Check only skills for this program
+  // 4. Auto-fill hard skills hidden field from program
   const programSkills = WAGON_PROGRAMS[el.dataset.program] || []
-  document.querySelectorAll('.skill-tag').forEach(tag => {
-    if (programSkills.includes(tag.dataset.skill)) {
-      tag.classList.add('active')
-    }
-  })
+  const hardInput = document.getElementById('hardSkillsInput')
+  if (hardInput) hardInput.value = programSkills.join(', ')
 
-  // 5. Show confirmation message
+  // 5. Show technical skills in right preview panel
+  const techWrap = document.getElementById('previewTechWrap')
+  const techDiv = document.getElementById('previewTech')
+  if (techWrap && techDiv) {
+    techDiv.innerHTML = programSkills.map(s =>
+      `<span style="padding:3px 10px;border-radius:100px;font-size:.73rem;font-weight:600;background:#F3F0FF;color:#6C3EF4;border:1px solid #E5DEFF;">${s}</span>`
+    ).join('')
+    techWrap.style.display = 'block'
+  }
+
+  // 6. Show confirmation message
   const confirm = document.getElementById('programConfirm')
-  confirm.textContent = '✓ ' + programSkills.length + ' skills pre-selected. Add anything extra you know on top.'
+  confirm.textContent = '✓ ' + programSkills.length + ' skills added automatically.'
   confirm.style.display = 'block'
 
   if (typeof updateSoftCounter === 'function') updateSoftCounter()

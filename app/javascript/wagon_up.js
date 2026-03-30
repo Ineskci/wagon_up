@@ -4,7 +4,7 @@ window.toggleTag = function(el) {
   const isSoftSkill = el.closest("#softSkills");
   if (isSoftSkill && !el.classList.contains("active")) {
     const selected = document.querySelectorAll("#softSkills .skill-tag.active").length;
-    if (selected >= 7) return;
+    if (selected >= 5) return;
   }
   el.classList.toggle("active");
   if (typeof updateSoftCounter === 'function') updateSoftCounter();
