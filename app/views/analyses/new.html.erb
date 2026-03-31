@@ -221,8 +221,9 @@ function updateSoftCounter() {
   }
 }
 
-function updatePreview() {
-  const hardTags = document.querySelectorAll('#hardSkills .skill-tag.active');
+window.updatePreview = function updatePreview() {
+  const hardInput = document.getElementById('hardSkillsInput');
+  const hardCount = hardInput && hardInput.value.trim() ? hardInput.value.split(',').filter(s => s.trim()).length : 0;
   const softTags = document.querySelectorAll('#softSkills .skill-tag.active');
 
   // Program preview
@@ -272,7 +273,6 @@ function updatePreview() {
   }
 
   // Score estimate
-  const hardCount = hardTags.length;
   const softCount = softTags.length;
   const marketCount = countryTexts.length;
   const total = hardCount + (softCount * 2) + (marketCount * 3);

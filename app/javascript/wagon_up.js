@@ -121,6 +121,7 @@ function initCountrySelector() {
       chipsContainer.appendChild(chip);
     });
     updateHiddenInput();
+    if (typeof window.updatePreview === 'function') window.updatePreview();
   }
 
   function renderDropdown(query) {
